@@ -1,0 +1,94 @@
+package POS_SYSTEM;
+
+import org.apache.poi.xssf.usermodel.*;
+import java.io.*;
+import java.util.*;
+
+
+public class logInPage extends logInSection{
+    private static final String FILE_PATH = "db/systemAccounts.xlsx"; // DATABASE FOR ACCOUNTS
+
+    public static List<List<Object>> readExcel(String filePath) {
+        List<List<Object>> data = new ArrayList<>();
+
+        try (InputStream inputStream = logInPage.class.getClassLoader().getResourceAsStream(filePath);
+             XSSFWorkbook workbook = inputStream != null ? new XSSFWorkbook(inputStream)
+                     : new XSSFWorkbook(new FileInputStream(filePath))) {
+
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            int rows = sheet.getLastRowNum();
+
+            if (rows < 0) {
+                System.out.println("The sheet is empty");
+                return data;
+            }
+
+            int cols = sheet.getRow(0).getLastCellNum();
+
+            for (int r = 0; r <= rows; r++) {
+                XSSFRow row = sheet.getRow(r);
+                List<Object> rowData = new ArrayList<>();
+
+                if (row != null) {
+                    for (int c = 0; c < cols; c++) {
+                        XSSFCell cell = row.getCell(c, XSSFRow.MissingCellPolicy.RETURN_BLANK_AS_NULL);
+                        rowData.add(getCellValue(cell));
+                    }
+                }
+                data.add(rowData);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Excel file not found: " + filePath);
+        } catch (IOException e) {
+            System.err.println("Error reading Excel file: " + e.getMessage());
+        }
+
+        return data;
+    }
+    private static Object getCellValue(XSSFCell cell) {
+        if (cell == null) return null;
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                double numValue = cell.getNumericCellValue();
+                return numValue == (int)numValue ? (int)numValue : numValue;
+            case BOOLEAN:
+                return cell.getBooleanCellValue();
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return null;
+        }
+    }
+
+    public static boolean authenticateUser(int userID, String password) {
+        List<List<Object>> data = readExcel(FILE_PATH);
+        for (List<Object> row : data) {
+            if (row == null || row.size() < 3) continue;
+
+            try {
+                // Column 0 (convert to int)
+                int currentID;
+                Object idValue = row.get(0);
+
+                if (idValue instanceof Double) {
+                    currentID = ((Double) idValue).intValue();
+                } else if (idValue instanceof Integer) {
+                    currentID = (Integer) idValue;
+                } else {
+                    currentID = Integer.parseInt(idValue.toString());
+                }
+                String currentPassword = row.get(3).toString();
+
+                if (userID == currentID && password.equals(currentPassword)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                System.err.println("Error reading user data: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+}
