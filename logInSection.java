@@ -1,25 +1,25 @@
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package POS_SYSTEM;
+import org.slf4j.Logger; // not yet needed atm
+import org.slf4j.LoggerFactory; // not yet needed atm
 
 import javax.swing.*;
 import java.awt.*;
 
-public class logInSection extends JFrame {
-    private static final Logger log = LoggerFactory.getLogger(logInSection.class);
+public class logInSection extends javax.swing.JFrame {
+    private static final Logger log = LoggerFactory.getLogger(logInSection.class); // not yet needed atm
 
     public logInSection(){
 
-        Font loginTitleFont = FontUtils.loadFont(36f);
-        Font loginLabelFont = FontUtils.loadFont(16f);
-        Font loginBtnFont = FontUtils.loadFont(17f);
+        Font loginTitleFont = new Font("Arial", Font.BOLD, 36);
+        Font loginLabelFont = new Font("Arial", Font.PLAIN, 16);
+        Font loginBtnFont = new Font("Arial", Font.BOLD, 17);
         setSize(1280,720);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
         //SYSTEM ICON
-        ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
+        ImageIcon systemIcon = new ImageIcon("img/Logo.jpg");
         setIconImage(systemIcon.getImage());
         setTitle("PCU-POS");
 
@@ -41,7 +41,7 @@ public class logInSection extends JFrame {
 
 
         //PCU LOGO
-        ImageIcon systemLogo = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
+        ImageIcon systemLogo = new ImageIcon("img/Logo.jpg");
         JLabel pcuLogo = new JLabel();
         Image originalImage = systemLogo.getImage();
 
@@ -58,7 +58,7 @@ public class logInSection extends JFrame {
 
         //USER/PASS LABELS AND TEXTFIELDS:
         JLabel userFieldLabel = new JLabel();
-        userFieldLabel.setText("User Id");
+        userFieldLabel.setText("User ID");
         userFieldLabel.setForeground(Color.WHITE);
         userFieldLabel.setFont(loginLabelFont);
         userFieldLabel.setBounds(120,180,126,24);
@@ -102,13 +102,25 @@ public class logInSection extends JFrame {
         registerAcc.setBounds(200,430,200,53);
         logInCont.add(registerAcc);
 
+        logInBtn.addActionListener(e -> {
+            String userID = userTextField.getText().trim();
+            String password = new String (passTextField.getPassword()).trim();
+
+            if (userID.isEmpty() && password.isEmpty()){
+                JOptionPane.showMessageDialog(this,"Please enter both user ID and password","Login Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (logInPage.authenticateUser(Integer.parseInt(userID), password)){
+                JOptionPane.showMessageDialog(this,"Login successful!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(this,"Invalid user ID or password","Login Failed", JOptionPane.ERROR_MESSAGE);
+                passTextField.setText("");
+                userTextField.requestFocus();
+            }
+        });
     }
     public static void main (String[] args){
         new logInSection();
     }
-
-
-
-
 }
-
