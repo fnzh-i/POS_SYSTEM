@@ -69,7 +69,6 @@ public class logInPage extends logInSection{
         for (List<Object> row : data) {
             if (row == null || row.size() < 4) continue;
 
-
             String dbUsername = row.get(2).toString();
             String dbPassword = row.get(3).toString();
 
