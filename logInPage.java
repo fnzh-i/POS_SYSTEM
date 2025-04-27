@@ -1,6 +1,8 @@
 package POS_SYSTEM;
 
 import org.apache.poi.xssf.usermodel.*;
+
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -65,12 +67,21 @@ public class logInPage extends logInSection{
     public static boolean authenticateUser(String userName, String password) {
         List<List<Object>> data = readExcel(FILE_PATH);
         for (List<Object> row : data) {
-            if (row.size() > 3 &&
-                    userName.equals(row.get(2).toString()) &&
-                    password.equals(row.get(3).toString())); {
+            if (row == null || row.size() < 4) continue;
+
+
+            String dbUsername = row.get(2).toString();
+            String dbPassword = row.get(3).toString();
+
+            if (userName.equals(dbUsername) && password.equals(dbPassword)) {
                 return true;
             }
         }
+
+        JOptionPane.showMessageDialog(null,
+                "User not found in database",
+                "Login Failed",
+                JOptionPane.ERROR_MESSAGE);
         return false;
     }
 }
