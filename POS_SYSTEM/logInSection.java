@@ -5,6 +5,8 @@ import fonts.fontUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class logInSection extends javax.swing.JFrame {
     // private static final Logger log = LoggerFactory.getLogger(logInSection.class); not yet needed atm
@@ -114,7 +116,7 @@ public class logInSection extends javax.swing.JFrame {
             if (logInPage.authenticateUser(userName, password)){
                 JOptionPane.showMessageDialog(this,"Login successful!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
 
-               new posSystem().show();
+               new posSystem();
                dispose();
             }
             else {
@@ -122,6 +124,27 @@ public class logInSection extends javax.swing.JFrame {
                 passTextField.setText("");
                 userTextField.requestFocus();
             }
+        });
+
+        registerAcc.addMouseListener(new MouseListener() {
+
+            public void mouseClicked(MouseEvent e){
+                new posSystem(); // CHANGE TO REGISRATION FORM
+                dispose();
+            }
+            @Override
+            public void mouseEntered(MouseEvent e){
+            }
+            @Override
+            public void mouseExited(MouseEvent e){
+            }
+            @Override
+            public void mousePressed(MouseEvent e){
+            }
+            @Override
+            public void mouseReleased(MouseEvent e){
+            }
+
         });
     }
 }

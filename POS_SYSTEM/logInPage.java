@@ -67,18 +67,22 @@ public class logInPage extends logInSection{
     public static boolean authenticateUser(String userName, String password) {
         List<List<Object>> data = readExcel(FILE_PATH);
         for (List<Object> row : data) {
-            if (row == null || row.size() < 4) continue;
+            // Skip null rows or rows with insufficient data
+            if (row == null || row.size() < 5) continue;
 
-            String dbUsername = row.get(2).toString();
-            String dbPassword = row.get(3).toString();
+            Object usernameObj = row.get(3);
+            Object passwordObj = row.get(4);
 
-            if (userName.equals(dbUsername) && password.equals(dbPassword)) {
+            if (usernameObj == null || passwordObj == null) continue;
+
+            if (userName.equals(usernameObj.toString()) &&
+                    password.equals(passwordObj.toString())) {
                 return true;
             }
         }
 
         JOptionPane.showMessageDialog(null,
-                "User not found in database",
+                "User or password was not found in database",
                 "Login Failed",
                 JOptionPane.ERROR_MESSAGE);
         return false;
