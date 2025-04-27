@@ -1,8 +1,11 @@
+package POS_SYSTEM;
+import fonts.fontUtils;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 
-public class posSystem extends JFrame {
+
+public class posSystem extends javax.swing.JFrame {
 
     private navigationPanel navSection;
     private orderItemPanel orderItemSection;
@@ -36,25 +39,7 @@ public class posSystem extends JFrame {
     }
 
     public static void main(String[] args){
-        new posSystem();
-    }
-
-}
-
-class FontUtils{
-    public  static Font loadFont(String fontPath, float size){
-        Font font = null;
-        try{
-            File fontStyle = new File("Fonts/Roboto-VariableFont_wdth,wght.ttf");
-            font = Font.createFont(Font.TRUETYPE_FONT, fontStyle).deriveFont(size);
-        }catch (Exception e){
-            e.printStackTrace();
-            font = new Font ("ARIAL", Font.PLAIN, (int) size);
-        }
-        return font;
-    }
-    public static Font loadFont(float size){
-        return loadFont("Fonts/Roboto-VariableFont_wdth,wght.ttf", size);
+        new logInSection();
     }
 
 }
@@ -64,7 +49,7 @@ class navigationPanel extends JPanel{
 
     public navigationPanel(){
 
-        Font navFont = FontUtils.loadFont(17f);
+        Font navFont = fontUtils.loadFont(17f);
 
         //NAV PANEL
         setBackground(Color.decode("#03346E"));
@@ -150,7 +135,7 @@ class orderItemPanel extends JPanel{
     orderItemPanel(){
 
         //ORDER ITEM PANEL
-        Font oiFont = FontUtils.loadFont(17f);
+        Font oiFont = fontUtils.loadFont(17f);
         setBackground(Color.decode("#021526"));
         setBounds(300,0,980,720);
         setLayout(null);
