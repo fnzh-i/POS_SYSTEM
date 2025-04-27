@@ -42,7 +42,6 @@ public class logInPage extends logInSection{
         } catch (IOException e) {
             System.err.println("Error reading Excel file: " + e.getMessage());
         }
-
         return data;
     }
     private static Object getCellValue(XSSFCell cell) {
@@ -63,30 +62,13 @@ public class logInPage extends logInSection{
         }
     }
 
-    public static boolean authenticateUser(int userID, String password) {
+    public static boolean authenticateUser(String userName, String password) {
         List<List<Object>> data = readExcel(FILE_PATH);
         for (List<Object> row : data) {
-            if (row == null || row.size() < 3) continue;
-
-            try {
-                // Column 0 (convert to int)
-                int currentID;
-                Object idValue = row.get(0);
-
-                if (idValue instanceof Double) {
-                    currentID = ((Double) idValue).intValue();
-                } else if (idValue instanceof Integer) {
-                    currentID = (Integer) idValue;
-                } else {
-                    currentID = Integer.parseInt(idValue.toString());
-                }
-                String currentPassword = row.get(3).toString();
-
-                if (userID == currentID && password.equals(currentPassword)) {
-                    return true;
-                }
-            } catch (Exception e) {
-                System.err.println("Error reading user data: " + e.getMessage());
+            if (row.size() > 3 &&
+                    userName.equals(row.get(2).toString()) &&
+                    password.equals(row.get(3).toString())); {
+                return true;
             }
         }
         return false;

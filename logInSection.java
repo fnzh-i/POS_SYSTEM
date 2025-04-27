@@ -4,15 +4,16 @@ import org.slf4j.LoggerFactory; // not yet needed atm
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class logInSection extends javax.swing.JFrame {
     private static final Logger log = LoggerFactory.getLogger(logInSection.class); // not yet needed atm
 
     public logInSection(){
 
-        Font loginTitleFont = new Font("Arial", Font.BOLD, 36);
-        Font loginLabelFont = new Font("Arial", Font.PLAIN, 16);
-        Font loginBtnFont = new Font("Arial", Font.BOLD, 17);
+        Font loginTitleFont = FontUtils.loadFont(36f);
+        Font loginLabelFont = FontUtils.loadFont(16f);
+        Font loginBtnFont = FontUtils.loadFont(17f);
         setSize(1280,720);
         setLayout(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,7 +59,7 @@ public class logInSection extends javax.swing.JFrame {
 
         //USER/PASS LABELS AND TEXTFIELDS:
         JLabel userFieldLabel = new JLabel();
-        userFieldLabel.setText("User ID");
+        userFieldLabel.setText("Username");
         userFieldLabel.setForeground(Color.WHITE);
         userFieldLabel.setFont(loginLabelFont);
         userFieldLabel.setBounds(120,180,126,24);
@@ -103,22 +104,39 @@ public class logInSection extends javax.swing.JFrame {
         logInCont.add(registerAcc);
 
         logInBtn.addActionListener(e -> {
-            String userID = userTextField.getText().trim();
+            String userName = userTextField.getText().trim();
             String password = new String (passTextField.getPassword()).trim();
 
-            if (userID.isEmpty() && password.isEmpty()){
-                JOptionPane.showMessageDialog(this,"Please enter both user ID and password","Login Error", JOptionPane.ERROR_MESSAGE);
+            if (userName.isEmpty() && password.isEmpty()){
+                JOptionPane.showMessageDialog(this,"Please enter both username and password","Login Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (logInPage.authenticateUser(Integer.parseInt(userID), password)){
+            if (logInPage.authenticateUser(userName, password)){
                 JOptionPane.showMessageDialog(this,"Login successful!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
             }
             else {
-                JOptionPane.showMessageDialog(this,"Invalid user ID or password","Login Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Invalid username or password","Login Failed", JOptionPane.ERROR_MESSAGE);
                 passTextField.setText("");
                 userTextField.requestFocus();
             }
         });
+    }
+    class FontUtils{
+        public  static Font loadFont(String fontPath, float size){
+            Font font = null;
+            try{
+                File fontStyle = new File("Fonts/Roboto-VariableFont_wdth,wght.ttf");
+                font = Font.createFont(Font.TRUETYPE_FONT, fontStyle).deriveFont(size);
+            }catch (Exception e){
+                e.printStackTrace();
+                font = new Font ("ARIAL", Font.PLAIN, (int) size);
+            }
+            return font;
+        }
+        public static Font loadFont(float size){
+            return loadFont("Fonts/Roboto-VariableFont_wdth,wght.ttf", size);
+        }
+
     }
     public static void main (String[] args){
         new logInSection();
