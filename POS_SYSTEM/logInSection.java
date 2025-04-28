@@ -124,7 +124,7 @@ public class logInSection extends javax.swing.JFrame {
         registerAcc.addMouseListener(new MouseListener() {
 
             public void mouseClicked(MouseEvent e){
-                new posSystem(); // CHANGE TO REGISRATION FORM
+                new registerUser(); // CHANGE TO REGISRATION FORM
                 dispose();
             }
             @Override
