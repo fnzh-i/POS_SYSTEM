@@ -1,9 +1,7 @@
 package POS_SYSTEM;
 import fonts.fontUtils;
-
 import javax.swing.*;
 import java.awt.*;
-
 
 public class posSystem extends javax.swing.JFrame {
 
@@ -11,14 +9,13 @@ public class posSystem extends javax.swing.JFrame {
     private orderItemPanel orderItemSection;
 
     public posSystem(){
-
-
         //JFRAME:
       setSize(1280,720);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setLayout(null);
       setResizable(false);
       setVisible(true);
+      this.setLocationRelativeTo(null);
 
       //SYSTEM ICON
       ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
@@ -41,9 +38,7 @@ public class posSystem extends javax.swing.JFrame {
     public static void main(String[] args){
         new logInSection();
     }
-
 }
-
 
 class navigationPanel extends JPanel{
 
@@ -80,7 +75,6 @@ class navigationPanel extends JPanel{
         add(navTitle);
 
         //NAV OPTIONS
-
         JLabel orderLabel = new JLabel();
         orderLabel.setForeground(Color.decode("#ffffff"));
         orderLabel.setFont(navFont);
@@ -124,10 +118,7 @@ class navigationPanel extends JPanel{
         add(logoutLabel);
 
         repaint();
-
-
     }
-
 }
 
 class orderItemPanel extends JPanel{
@@ -145,6 +136,7 @@ class orderItemPanel extends JPanel{
         searchPanel.setBackground(Color.decode("#898b8f"));
         searchPanel.setBounds(70,30,550,43);
         searchPanel.setLayout(null);
+
         add(searchPanel);
 
         JButton searchButton = new JButton();
@@ -158,10 +150,21 @@ class orderItemPanel extends JPanel{
         searchBar.setFont(oiFont);
         searchBar.setBounds(0,0,450,43);
         searchPanel.add(searchBar);
+
+        searchBar.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (searchBar.getText().isEmpty()) {
+                    searchBar.setText("Search Menu...");
+                }
+            }
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (searchBar.getText().equals("Search Menu...")) {
+                    searchBar.setText("");
+                }
+            }
+        });
     }
-
-
-
 }
 
 

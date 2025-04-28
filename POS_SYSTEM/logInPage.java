@@ -1,11 +1,8 @@
 package POS_SYSTEM;
-
 import org.apache.poi.xssf.usermodel.*;
-
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
-
 
 public class logInPage extends logInSection{
     private static final String FILE_PATH = "db/systemAccounts.xlsx"; // DATABASE FOR ACCOUNTS
