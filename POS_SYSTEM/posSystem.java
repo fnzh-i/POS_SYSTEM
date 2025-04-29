@@ -1,6 +1,7 @@
+import jakarta.xml.bind.JAXBContext;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -16,36 +17,34 @@ public class posSystem extends JFrame {
 
 
         //JFRAME:
-        setSize(1280,720);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(null);
-        setResizable(false);
+      setSize(1280,720);
+      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      setLayout(new BorderLayout());
+      setResizable(false);
 
 
-        //SYSTEM ICON
-        ImageIcon systemIcon = new ImageIcon("cropped-PCU-logo.png");
-        setIconImage(systemIcon.getImage());
-        setTitle("PCU-POS");
+      //SYSTEM ICON
+      ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
+      setIconImage(systemIcon.getImage());
+      setTitle("PCU-POS");
 
-        //SYSTEM BG COLOR
+      //SYSTEM BG COLOR
         getContentPane().setBackground(Color.decode("#021526"));
 
 
-        //ADDING SECTIONS & SYSTEM COMPONENTS:
+      //ADDING SECTIONS & SYSTEM COMPONENTS:
         navSection = new navigationPanel();
-        add(navSection);
+        add(navSection, BorderLayout.WEST);
         orderItemSection = new orderItemPanel();
-        add(orderItemSection);
-        setVisible(true);
+        add(orderItemSection, BorderLayout.CENTER);
 
+
+        setVisible(true);
     }
 
     public static void main(String[] args){
         new posSystem();
     }
-
-
-
 
 }
 
@@ -72,13 +71,22 @@ class navigationPanel extends JPanel{
 
     public navigationPanel(){
 
-        Font navFont = FontUtils.loadFont(17f);
+        Font navFont = FontUtils.loadFont(20f);
+        setPreferredSize(new Dimension(300, getHeight()));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
 
 
         //NAV PANEL
         setBackground(Color.decode("#03346E"));
-        setBounds(0, 0, 300, 720);
-        setLayout(null);
+
+
+        JPanel navHeader = new JPanel();
+        navHeader.setLayout(new BoxLayout(navHeader, BoxLayout.X_AXIS));
+        navHeader.setBackground(Color.decode("#03346E"));
+        navHeader.setBorder(BorderFactory.createEmptyBorder(20,20,30,20));
+        navHeader.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+
 
         //PCU LOGO FOR NAV
         ImageIcon systemLogo = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
@@ -92,84 +100,81 @@ class navigationPanel extends JPanel{
         ImageIcon scaledLogo = new ImageIcon(ScaledImg);
 
         pcuLogo.setIcon(scaledLogo);
-        pcuLogo.setBounds(6,15,70,70);
-        add(pcuLogo);
+        pcuLogo.setAlignmentY(Component.CENTER_ALIGNMENT);
+        navHeader.add(pcuLogo);
 
         //NAV SYSTEM TITLE
         JLabel navTitle = new JLabel();
         navTitle.setForeground(Color.WHITE);
         navTitle.setFont(navFont);
-        navTitle.setText("PCU CANTEEN POS");
-        navTitle.setBounds(88,43,150,26);
-        add(navTitle);
+        navTitle.setText("   PCU CANTEEN POS");
+        navTitle.setAlignmentY(Component.CENTER_ALIGNMENT);
+        navHeader.add(navTitle);
+
+        add(navHeader);
 
         //NAV OPTIONS
 
-        JLabel orderLabel = new JLabel();
-        orderLabel.setForeground(Color.decode("#ffffff"));
-        orderLabel.setFont(navFont);
-        orderLabel.setText("Order Item");
-        orderLabel.setBounds(57, 150, 113, 18);
-        add(orderLabel);
+        // NAV OPTIONS - in a separate JPanel
+        JPanel navOptionsPanel = new JPanel();
+        navOptionsPanel.setLayout(new BoxLayout(navOptionsPanel, BoxLayout.Y_AXIS));
+        navOptionsPanel.setBackground(Color.decode("#03346E"));
+        navOptionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        navOptionsPanel.add(createNavButton("Order Item", navFont));
+        navOptionsPanel.add(createNavButton("Order History", navFont));
+        navOptionsPanel.add(createNavButton("Dashboard", navFont));
+        navOptionsPanel.add(createNavButton("Menu Management", navFont));
+        navOptionsPanel.add(createNavButton("Inventory", navFont));
+
+        navOptionsPanel.add(Box.createVerticalGlue()); // Push Log out to the bottom
+        navOptionsPanel.add(createNavButton("Logout", navFont));
+        navOptionsPanel.add(Box.createVerticalStrut(20));
+
+        add(navOptionsPanel, BorderLayout.CENTER); // Add the options panel to the center
 
 
-        orderLabel.addMouseListener(new MouseAdapter() { // to log out
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                new orderSummary();
-
-            }
-        });
-
-        JLabel ohLabel = new JLabel();
-        ohLabel.setForeground(Color.decode("#ffffff"));
-        ohLabel.setFont(navFont); // Corrected: Use ohLabel.setFont()
-        ohLabel.setText("Order History");
-        ohLabel.setBounds(57, 200, 192, 18);
-        add(ohLabel);
-
-        JLabel dbLabel = new JLabel();
-        dbLabel.setForeground(Color.decode("#ffffff"));
-        dbLabel.setFont(navFont);
-        dbLabel.setText("Dashboard");
-        dbLabel.setBounds(57, 250, 126, 18);
-        add(dbLabel);
-
-        JLabel menuLabel = new JLabel();
-        menuLabel.setForeground(Color.decode("#ffffff"));
-        menuLabel.setFont(navFont); // Corrected: Use menuLabel.setFont()
-        menuLabel.setText("Menu Management");
-        menuLabel.setBounds(57, 300, 213, 18);
-        add(menuLabel);
-
-        JLabel invLabel = new JLabel();
-        invLabel.setForeground(Color.decode("#ffffff"));
-        invLabel.setFont(navFont);
-        invLabel.setText("Inventory");
-        invLabel.setBounds(57, 350, 192, 18);
-        add(invLabel);
-
-        JLabel logoutLabel = new JLabel();
-        logoutLabel.setForeground(Color.decode("#ffffff"));
-        logoutLabel.setFont(navFont); // Corrected: Use logoutLabel.setFont()
-        logoutLabel.setText("Log out");
-        logoutLabel.setBounds(57, 600, 57, 18); // Adjusted height to 18 for consistency
-        add(logoutLabel);
         repaint();
 
-        logoutLabel.addMouseListener(new MouseAdapter() { // to log out
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(logoutLabel);
-                if (topFrame != null) {
-                    topFrame.dispose();
-                }
-             new logInSection();
 
+    }
+
+    private JButton createNavButton(String text, Font font){
+
+        JButton navButton = new JButton(text);
+        navButton.setFont(font);
+        navButton.setForeground(Color.WHITE);
+        navButton.setBackground(Color.decode("#03346E"));
+        navButton.setBorderPainted(false);
+        navButton.setFocusPainted(false);
+        navButton.setHorizontalAlignment(SwingConstants.LEFT); // Align text to the left
+        navButton.setAlignmentX(Component.CENTER_ALIGNMENT);   // Align button to the left in BoxLayout
+        navButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        navButton.setBorder(BorderFactory.createEmptyBorder(20,40,20,0));
+
+
+
+
+        //HOVER EFFECTS:
+        navButton.addMouseListener(new MouseAdapter() {
+            private Color originalColor = navButton.getBackground();
+            private Color hoverColor = Color.decode("#035096");
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                navButton.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                navButton.setBackground(originalColor);
             }
         });
 
+        return navButton;
+
     }
+
 
 }
 
@@ -179,71 +184,94 @@ class orderItemPanel extends JPanel{
 
     orderItemPanel(){
         Font cattegoryFont = FontUtils.loadFont(13f);
+        Font productItemFont = FontUtils.loadFont(15f);
         Font dateFont = FontUtils.loadFont(12f);
         Font processBtnFont = FontUtils.loadFont(16f);
 
         //ORDER ITEM PANEL
         Font oiFont = FontUtils.loadFont(17f);
         setBackground(Color.decode("#021526"));
-        setBounds(300,0,980,720);
-        setLayout(null);
+        setPreferredSize(new Dimension(980, getHeight()));
+        setLayout(new BorderLayout());
+
+        JPanel mainConts = new JPanel();
+        mainConts.setLayout(new BoxLayout(mainConts, BoxLayout.Y_AXIS));
+        mainConts.setBackground(Color.decode("#021526"));
+        mainConts.setBorder(BorderFactory.createEmptyBorder(10,70,10,0));
+
+
+
+
 
         //SEARCH BAR:
-        JPanel searchPanel = new JPanel();
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,0,0));
         searchPanel.setBackground(Color.decode("#898b8f"));
-        searchPanel.setBounds(70,30,550,43);
-        searchPanel.setLayout(null);
-        add(searchPanel);
-
-        JButton searchButton = new JButton();
-        searchButton.setText("Search");
-        searchButton.setFont(oiFont);
-        searchButton.setBounds(450,0,100,43);
-        searchPanel.add(searchButton);
+        searchPanel.setPreferredSize(new Dimension(550,43));
+        searchPanel.setLayout(new BorderLayout());
+        searchPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JTextField searchBar = new JTextField();
         searchBar.setBackground(Color.decode("#898b8f"));
         searchBar.setFont(oiFont);
-        searchBar.setBounds(0,0,450,43);
-        searchPanel.add(searchBar);
+        searchBar.setPreferredSize(new Dimension(450,43));
+        searchPanel.add(searchBar, BorderLayout.CENTER);
+
+        JButton searchButton = new JButton();
+        searchButton.setText("Search");
+        searchButton.setFont(oiFont);
+        searchButton.setPreferredSize(new Dimension(100,43));
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+
+        mainConts.add(searchPanel);
 
 
         //JBUTTON FOR PRODUCT CATEGORY
-        JButton allButton = new JButton();
-        allButton.setText("All");
-        allButton.setFont(cattegoryFont);
-        allButton.setBackground(Color.gray);
-        allButton.setBorder(BorderFactory.createLineBorder(Color.decode("#5b7bf0"),3));
-        allButton.setForeground(Color.WHITE);
-        allButton.setBounds(70,95, 45,30);
-        add(allButton);
 
-        JButton mealsButton = new JButton();
-        mealsButton.setText("Meals");
-        mealsButton.setFont(cattegoryFont);
-        mealsButton.setBackground(Color.gray);
-//        mealsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
-        mealsButton.setForeground(Color.WHITE);
-        mealsButton.setBounds(120,95, 80,30);
-        add(mealsButton);
+        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,10,10));
+        categoryPanel.setBackground(Color.decode("#021526"));
+        categoryPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        categoryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JButton snacksButton = new JButton();
-        snacksButton.setText("Snacks");
-        snacksButton.setFont(cattegoryFont);
-        snacksButton.setBackground(Color.gray);
-//        mealsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
-        snacksButton.setForeground(Color.WHITE);
-        snacksButton.setBounds(210,95, 80,30);
-        add(snacksButton);
+        categoryPanel.add(createCategoryButton("All", cattegoryFont, Color.gray));
+        categoryPanel.add(createCategoryButton("Meals", cattegoryFont, Color.gray));
+        categoryPanel.add(createCategoryButton("Snacks", cattegoryFont, Color.gray));
+        categoryPanel.add(createCategoryButton("Drinks", cattegoryFont, Color.gray));
 
-        JButton drinksButton = new JButton();
-        drinksButton.setText("Drinks");
-        drinksButton.setFont(cattegoryFont);
-        drinksButton.setBackground(Color.gray);
-//        mealsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
-        drinksButton.setForeground(Color.WHITE);
-        drinksButton.setBounds(300,95, 80,30);
-        add(drinksButton);
+        mainConts.add(categoryPanel);
+
+
+        //PRODUCT ITEM PANEL
+        JPanel productItemPanel = new JPanel(new GridLayout(0,3,20,20));
+        productItemPanel.setBackground(Color.decode("#021526"));
+        productItemPanel.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
+        productItemPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", productItemFont , 15.00));
+
+        JScrollPane productScrollPane = new JScrollPane(productItemPanel);
+        productScrollPane.setBorder(null);
+        productScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        productScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JScrollBar verticalScrollBar = productScrollPane.getVerticalScrollBar();
+        verticalScrollBar.setUnitIncrement(30);
+        verticalScrollBar.setBlockIncrement(100);
+
+        mainConts.add(productScrollPane);
+
+
+
+
+        JPanel orderSummary = new JPanel();
+        orderSummary.setPreferredSize(new Dimension(294, getHeight()));
+        orderSummary.setBackground(Color.decode("#021526"));
 
 
         JLabel datelabel = new JLabel();
@@ -255,27 +283,188 @@ class orderItemPanel extends JPanel{
         String formattedDate = dateFormat.format(date);
         datelabel.setText(formattedDate);
         datelabel.setBounds(700, 40, 250, 20); // Set the bounds for datelabel
-        add(datelabel);
+        orderSummary.add(datelabel);
 
 
         productItem product = new productItem();
         orderSummary os = new orderSummary();
         subTotal st= new subTotal();
 
-        add(product);
-        add(os);
-        add(st);
+
+        add(mainConts, BorderLayout.CENTER);
+        orderSummary.add(os);
+        orderSummary.add(st);
+        add(orderSummary, BorderLayout.EAST);
+
+//
 
     }
 
+    private JButton createCategoryButton(String text, Font font, Color bgColor){
+        JButton categoryButton = new JButton(text);
+        categoryButton.setFont(font);
+        categoryButton.setBackground(bgColor);
+        categoryButton.setBorderPainted(false);
+        categoryButton.setFocusPainted(false);
+        categoryButton.setForeground(Color.WHITE);
+
+
+        categoryButton.addMouseListener(new MouseAdapter() {
+            private Color originalColor = categoryButton.getBackground();
+            private Color hoverColor = Color.decode("#b1b5b2");
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                categoryButton.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                categoryButton.setBackground(originalColor);
+            }
+        });
+
+        return categoryButton;
+    }
+
+    private JPanel createProductItem (String text, String productSize,String productImg, Font font, double price){
+        JPanel productItem = new JPanel();
+        productItem.setBackground(Color.decode("#111010"));
+        productItem.setPreferredSize(new Dimension(150,250));
+        productItem.setLayout(new BorderLayout(5,5));
+        productItem.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        productItem.setBorder(BorderFactory.createLineBorder(Color.WHITE,1));
+
+        ImageIcon originalIcon = new ImageIcon(productImg);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(130,130, Image.SCALE_SMOOTH);
+        ImageIcon productPic = new ImageIcon(scaledImage);
+
+        //Product image:
+        JLabel imgFrame = new JLabel(productPic, SwingConstants.CENTER);
+        imgFrame.setAlignmentX(Component.CENTER_ALIGNMENT);
+        productItem.add(imgFrame, BorderLayout.NORTH);
+
+
+        JPanel textPanel = new JPanel();
+        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+        textPanel.setBackground(Color.decode("#111010"));
+
+        JLabel productName = new JLabel(text);
+        productName.setFont(font);
+        productName.setForeground(Color.WHITE);
+        productName.setAlignmentX(Component.CENTER_ALIGNMENT);
+        productItem.add(productName);
+        JLabel itemSize = new JLabel(productSize);
+        itemSize.setFont(font);
+        itemSize.setForeground(Color.gray);
+        itemSize.setAlignmentX(Component.CENTER_ALIGNMENT);
+        textPanel.add(productName);
+        textPanel.add(itemSize);
+        productItem.add(textPanel, BorderLayout.CENTER);
+
+        JPanel bottomPannel = new JPanel();
+        bottomPannel.setLayout(new BorderLayout());
+        bottomPannel.setBackground(Color.decode("#111010"));
+
+        JLabel productPrice = new JLabel();
+        productPrice.setText("₱" + String.format("%.2f", price));
+        productPrice.setFont(font);
+        productPrice.setForeground(Color.decode("#686AF5"));
+        bottomPannel.add(productPrice, BorderLayout.WEST);
+
+        JButton addProduct = new JButton("+");
+        addProduct.setForeground(Color.BLACK);
+        addProduct.setBackground(Color.decode("#686AF5"));
+        addProduct.setBorderPainted(false);
+        addProduct.setFocusPainted(false);
+        addProduct.setPreferredSize(new Dimension(42, 42)); // Use the size you mentioned
+        addProduct.setFont(font.deriveFont(Font.PLAIN, 14f)); // Try a slightly larger, plain font
+        addProduct.setHorizontalAlignment(SwingConstants.CENTER);
+        addProduct.setVerticalAlignment(SwingConstants.CENTER); // Keep a reasonable size
+        bottomPannel.add(addProduct, BorderLayout.EAST);
+        productItem.add(bottomPannel, BorderLayout.SOUTH);
+
+
+        return productItem;
+    }
+
+    private JPanel productItemSummary(String productName, String imgPath, String productSize, Font font, double price){
+
+        JPanel productItemSum = new JPanel();
+        productItemSum.setLayout(new BorderLayout());
+        productItemSum.setOpaque(false);
+
+
+        ImageIcon originalIcon = new ImageIcon(imgPath);
+        Image scaledImage = originalIcon.getImage().getScaledInstance(70,70, Image.SCALE_SMOOTH);
+        ImageIcon productPic = new ImageIcon(scaledImage);
+
+
+
+        //Product image (WEST PART):
+        JLabel imgFrame = new JLabel(productPic, SwingConstants.CENTER);
+        imgFrame.setAlignmentX(Component.CENTER_ALIGNMENT);
+        productItemSum.add(imgFrame, BorderLayout.WEST);
+
+
+
+        //PRODUCT DETAILS (CENTER PART):
+        JLabel itemName = new JLabel(productName);
+        itemName.setFont(font);
+        itemName.setForeground(Color.WHITE);
+        productItemSum.add(itemName);
+
+        JLabel itemSize = new JLabel("Size: " + productSize);
+        itemSize.setFont(font);
+        itemSize.setForeground(Color.WHITE);
+        productItemSum.add(itemSize);
+
+        JLabel itemPrize = new JLabel("₱" + String.format("%.2f", price));
+        itemPrize.setFont(font);
+        itemPrize.setForeground(Color.decode("#686AF5"));
+        productItemSum.add(itemPrize);
+
+
+
+        //BUTTONS (EAST PART):
+
+        JButton trashButton = new JButton("x");
+        trashButton.setForeground(Color.decode("#BD1212"));
+        trashButton.setPreferredSize(new Dimension(17,17));
+        trashButton.setBackground(Color.gray);
+
+        JPanel quantityButton = new JPanel();
+        quantityButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+
+        JButton addProduct = new JButton("-");
+        addProduct.setForeground(Color.WHITE);
+        addProduct.setBackground(Color.gray);
+        addProduct.setBorderPainted(false);
+        addProduct.setFocusPainted(false);
+        addProduct.setPreferredSize(new Dimension(42, 42)); // Use the size you mentioned
+        addProduct.setFont(font.deriveFont(Font.PLAIN, 14f)); // Try a slightly larger, plain font
+        addProduct.setHorizontalAlignment(SwingConstants.CENTER);
+        addProduct.setVerticalAlignment(SwingConstants.CENTER); // Keep
+
+
+
+
+
+
+
+
+    }
+
+
 }
+
+
 
 class productItem extends JPanel{
 
     public productItem(){
         setBackground(Color.decode("#111010"));
-        setLayout(null);
-        setBounds(70,150, 150,250);
+        setPreferredSize(new Dimension(150,250));
         setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
 
     }
@@ -299,3 +488,6 @@ class subTotal extends  JPanel{
         setBounds(670,400, 260,150);
     }
 }
+
+
+
