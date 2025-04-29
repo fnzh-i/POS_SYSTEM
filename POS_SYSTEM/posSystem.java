@@ -1,21 +1,23 @@
-package POS_SYSTEM;
-import fonts.fontUtils;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
-public class posSystem extends javax.swing.JFrame {
+public class posSystem extends JFrame {
 
     private navigationPanel navSection;
     private orderItemPanel orderItemSection;
 
     public posSystem(){
+
+
         //JFRAME:
       setSize(1280,720);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setLayout(null);
       setResizable(false);
-      setVisible(true);
-      this.setLocationRelativeTo(null);
+
 
       //SYSTEM ICON
       ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
@@ -33,18 +35,40 @@ public class posSystem extends javax.swing.JFrame {
         add(orderItemSection);
 
 
+        setVisible(true);
     }
 
     public static void main(String[] args){
-        new logInSection();
+        new posSystem();
     }
+
 }
+
+class FontUtils{
+    public  static Font loadFont(String fontPath, float size){
+        Font font = null;
+        try{
+            File fontStyle = new File("Fonts/Roboto-VariableFont_wdth,wght.ttf");
+            font = Font.createFont(Font.TRUETYPE_FONT, fontStyle).deriveFont(size);
+        }catch (Exception e){
+            e.printStackTrace();
+            font = new Font ("ARIAL", Font.PLAIN, (int) size);
+        }
+        return font;
+    }
+    public static Font loadFont(float size){
+        return loadFont("Fonts/Roboto-VariableFont_wdth,wght.ttf", size);
+    }
+
+}
+
 
 class navigationPanel extends JPanel{
 
     public navigationPanel(){
 
-        Font navFont = fontUtils.loadFont(17f);
+        Font navFont = FontUtils.loadFont(17f);
+
 
         //NAV PANEL
         setBackground(Color.decode("#03346E"));
@@ -75,6 +99,7 @@ class navigationPanel extends JPanel{
         add(navTitle);
 
         //NAV OPTIONS
+
         JLabel orderLabel = new JLabel();
         orderLabel.setForeground(Color.decode("#ffffff"));
         orderLabel.setFont(navFont);
@@ -118,15 +143,21 @@ class navigationPanel extends JPanel{
         add(logoutLabel);
 
         repaint();
+
+
     }
+
 }
 
 class orderItemPanel extends JPanel{
 
     orderItemPanel(){
+        Font cattegoryFont = FontUtils.loadFont(13f);
+        Font dateFont = FontUtils.loadFont(12f);
+        Font processBtnFont = FontUtils.loadFont(16f);
 
         //ORDER ITEM PANEL
-        Font oiFont = fontUtils.loadFont(17f);
+        Font oiFont = FontUtils.loadFont(17f);
         setBackground(Color.decode("#021526"));
         setBounds(300,0,980,720);
         setLayout(null);
@@ -136,7 +167,6 @@ class orderItemPanel extends JPanel{
         searchPanel.setBackground(Color.decode("#898b8f"));
         searchPanel.setBounds(70,30,550,43);
         searchPanel.setLayout(null);
-
         add(searchPanel);
 
         JButton searchButton = new JButton();
@@ -151,21 +181,101 @@ class orderItemPanel extends JPanel{
         searchBar.setBounds(0,0,450,43);
         searchPanel.add(searchBar);
 
-        searchBar.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent e) {
-                if (searchBar.getText().isEmpty()) {
-                    searchBar.setText("Search Menu...");
-                }
-            }
-            @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                if (searchBar.getText().equals("Search Menu...")) {
-                    searchBar.setText("");
-                }
-            }
-        });
+
+        //JBUTTON FOR PRODUCT CATEGORY
+        JButton allButton = new JButton();
+        allButton.setText("All");
+        allButton.setFont(cattegoryFont);
+        allButton.setBackground(Color.gray);
+        allButton.setBorder(BorderFactory.createLineBorder(Color.decode("#5b7bf0"),3));
+        allButton.setForeground(Color.WHITE);
+        allButton.setBounds(70,95, 45,30);
+        add(allButton);
+
+        JButton mealsButton = new JButton();
+        mealsButton.setText("Meals");
+        mealsButton.setFont(cattegoryFont);
+        mealsButton.setBackground(Color.gray);
+//        mealsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
+        mealsButton.setForeground(Color.WHITE);
+        mealsButton.setBounds(120,95, 80,30);
+        add(mealsButton);
+
+        JButton snacksButton = new JButton();
+        snacksButton.setText("Snacks");
+        snacksButton.setFont(cattegoryFont);
+        snacksButton.setBackground(Color.gray);
+//        mealsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
+        snacksButton.setForeground(Color.WHITE);
+        snacksButton.setBounds(210,95, 80,30);
+        add(snacksButton);
+
+        JButton drinksButton = new JButton();
+        drinksButton.setText("Drinks");
+        drinksButton.setFont(cattegoryFont);
+        drinksButton.setBackground(Color.gray);
+//        mealsButton.setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
+        drinksButton.setForeground(Color.WHITE);
+        drinksButton.setBounds(300,95, 80,30);
+        add(drinksButton);
+
+
+        JLabel datelabel = new JLabel();
+        datelabel.setForeground(Color.WHITE);
+        datelabel.setFont(dateFont);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, yyyy-MM-dd");
+        Date date = new Date();
+        String formattedDate = dateFormat.format(date);
+        datelabel.setText(formattedDate);
+        datelabel.setBounds(700, 40, 250, 20); // Set the bounds for datelabel
+        add(datelabel);
+
+
+        productItem product = new productItem();
+        orderSummary os = new orderSummary();
+        subTotal st= new subTotal();
+
+        add(product);
+        add(os);
+        add(st);
+
+    }
+
+}
+
+class productItem extends JPanel{
+
+    public productItem(){
+        setBackground(Color.decode("#111010"));
+        setLayout(null);
+        setBounds(70,150, 150,250);
+        setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
+
+    }
+
+}
+
+class orderSummary extends JPanel{
+    public orderSummary(){
+        setBackground(Color.decode("#383737"));
+        setLayout(null);
+        setBounds(670,95, 260,300);
+
+    }
+
+}
+
+class subTotal extends  JPanel{
+    public subTotal(){
+        setBackground(Color.decode("#383737"));
+        setLayout(null);
+        setBounds(670,400, 260,150);
     }
 }
+
+
+
 
 
 
