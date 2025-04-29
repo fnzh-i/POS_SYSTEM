@@ -1,6 +1,7 @@
 import jakarta.xml.bind.JAXBContext;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -260,23 +261,26 @@ class orderItemPanel extends JPanel{
         productScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         productScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        JScrollBar verticalScrollBar = productScrollPane.getVerticalScrollBar();
-        verticalScrollBar.setUnitIncrement(30);
-        verticalScrollBar.setBlockIncrement(100);
+        JScrollBar verticalScrollBar1 = productScrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setUnitIncrement(30);
+        verticalScrollBar1.setBlockIncrement(100);
 
         mainConts.add(productScrollPane);
 
 
-
+        //FOR ORDER SUMMARY AND ORDER PROCESS:
 
         JPanel orderSummary = new JPanel();
-        orderSummary.setPreferredSize(new Dimension(294, getHeight()));
+        orderSummary.setPreferredSize(new Dimension(250, 432));
         orderSummary.setBackground(Color.decode("#021526"));
+        orderSummary.setAlignmentY(Component.CENTER_ALIGNMENT);
+//        orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
 
-
+        //DATE AND TIME:
         JLabel datelabel = new JLabel();
         datelabel.setForeground(Color.WHITE);
         datelabel.setFont(dateFont);
+        datelabel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, yyyy-MM-dd");
         Date date = new Date();
@@ -285,18 +289,97 @@ class orderItemPanel extends JPanel{
         datelabel.setBounds(700, 40, 250, 20); // Set the bounds for datelabel
         orderSummary.add(datelabel);
 
+        //FOR ORDER LIST:
+        JPanel orderList = new JPanel();
+        orderList.setLayout(new BoxLayout(orderList, BoxLayout.Y_AXIS));
+        orderList.setBackground(Color.decode("#424040"));
+        orderList.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
 
-        productItem product = new productItem();
-        orderSummary os = new orderSummary();
-        subTotal st= new subTotal();
+
+
+
+        orderList.add(productItemSummary("Piattos", "Images/Sample Product Images/Piattos-Cheese-40g.png", "40g", cattegoryFont, 15.00));
+        orderList.add(productItemSummary("Piattos", "Images/Sample Product Images/Piattos-Cheese-40g.png", "40g", cattegoryFont, 15.00));
+        orderList.add(productItemSummary("Piattos", "Images/Sample Product Images/Piattos-Cheese-40g.png", "40g", cattegoryFont, 15.00));
+        orderList.add(productItemSummary("Piattos", "Images/Sample Product Images/Piattos-Cheese-40g.png", "40g", cattegoryFont, 15.00));
+
+
+        JScrollPane orderListScroll = new JScrollPane(orderList);
+        orderListScroll.setBorder(null);
+        orderListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        orderListScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JScrollBar verticalScrollBar2 = orderListScroll.getVerticalScrollBar();
+        verticalScrollBar2.setUnitIncrement(30);
+        verticalScrollBar2.setBlockIncrement(100);
+        orderSummary.add(orderListScroll);
+
+
+        //FOR SUBTOTAL:
+        JPanel subTotal = new JPanel();
+        subTotal.setBackground(Color.decode("#424040"));
+        subTotal.setPreferredSize(new Dimension(250, 144));
+        subTotal.setLayout(new BoxLayout(subTotal, BoxLayout.Y_AXIS));
+
+        JLabel stText = new JLabel("Sub Total: ");
+        stText.setFont(dateFont);
+        stText.setForeground(Color.WHITE);
+        subTotal.add(stText);
+
+        JLabel stTax = new JLabel("Tax: ");
+        stTax.setFont(dateFont);
+        stTax.setForeground(Color.WHITE);
+        subTotal.add(stTax);
+
+        JLabel stLine = new JLabel("__________________________________");
+        stTax.setFont(dateFont);
+        stLine.setForeground(Color.WHITE);
+        subTotal.add(stLine);
+
+        JLabel stTotal = new JLabel("Total: ");
+        stTotal.setFont(cattegoryFont);
+        stTotal.setForeground(Color.WHITE);
+        subTotal.add(stTotal);
+
+        orderSummary.add(subTotal);
+
+
+        //PROCESS BUTTONS:
+        JPanel orderButton = new JPanel();
+        orderButton.setLayout(new FlowLayout(FlowLayout.CENTER, 10,0));
+        orderButton.setOpaque(false);
+
+
+        JButton cancelBtn = new JButton("Cancel Order");
+        cancelBtn.setForeground(Color.WHITE);
+        cancelBtn.setBackground(Color.decode("#BD1212"));
+        cancelBtn.setPreferredSize(new Dimension(130,42));
+        cancelBtn.setFont(productItemFont);
+        orderButton.add(cancelBtn);
+
+        JButton processBtn = new JButton("Process Order");
+        processBtn.setForeground(Color.WHITE);
+        processBtn.setBackground(Color.decode("#F9A61A"));
+        processBtn.setPreferredSize(new Dimension(130,42));
+        processBtn.setFont(productItemFont);
+        orderButton.add(processBtn);
+
+        orderSummary.add(orderButton);
+
+
+
+
+
+
+
+
+
+
+
 
 
         add(mainConts, BorderLayout.CENTER);
-        orderSummary.add(os);
-        orderSummary.add(st);
         add(orderSummary, BorderLayout.EAST);
-
-//
 
     }
 
@@ -393,6 +476,7 @@ class orderItemPanel extends JPanel{
         JPanel productItemSum = new JPanel();
         productItemSum.setLayout(new BorderLayout());
         productItemSum.setOpaque(false);
+        productItemSum.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
 
         ImageIcon originalIcon = new ImageIcon(imgPath);
@@ -409,43 +493,91 @@ class orderItemPanel extends JPanel{
 
 
         //PRODUCT DETAILS (CENTER PART):
+        JPanel centerPart = new JPanel();
+        centerPart.setOpaque(false);
+        centerPart.setLayout(new BorderLayout());
+
         JLabel itemName = new JLabel(productName);
         itemName.setFont(font);
         itemName.setForeground(Color.WHITE);
-        productItemSum.add(itemName);
+        centerPart.add(itemName, BorderLayout.NORTH);
 
         JLabel itemSize = new JLabel("Size: " + productSize);
         itemSize.setFont(font);
         itemSize.setForeground(Color.WHITE);
-        productItemSum.add(itemSize);
+        centerPart.add(itemSize, BorderLayout.CENTER);
 
         JLabel itemPrize = new JLabel("₱" + String.format("%.2f", price));
         itemPrize.setFont(font);
         itemPrize.setForeground(Color.decode("#686AF5"));
-        productItemSum.add(itemPrize);
+        centerPart.add(itemPrize, BorderLayout.SOUTH);
 
-
+        productItemSum.add(centerPart, BorderLayout.CENTER);
 
         //BUTTONS (EAST PART):
+
+        JPanel eastPanel = new JPanel();
+        eastPanel.setOpaque(false);
+        eastPanel.setLayout(new BorderLayout());
+
 
         JButton trashButton = new JButton("x");
         trashButton.setForeground(Color.decode("#BD1212"));
         trashButton.setPreferredSize(new Dimension(17,17));
+        trashButton.setBorderPainted(false);
+        trashButton.setFocusPainted(false);
         trashButton.setBackground(Color.gray);
+        trashButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        eastPanel.add(trashButton, BorderLayout.NORTH);
+
 
         JPanel quantityButton = new JPanel();
+        quantityButton.setOpaque(false);
         quantityButton.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        quantityButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JButton addProduct = new JButton("-");
-        addProduct.setForeground(Color.WHITE);
-        addProduct.setBackground(Color.gray);
-        addProduct.setBorderPainted(false);
-        addProduct.setFocusPainted(false);
-        addProduct.setPreferredSize(new Dimension(42, 42)); // Use the size you mentioned
-        addProduct.setFont(font.deriveFont(Font.PLAIN, 14f)); // Try a slightly larger, plain font
-        addProduct.setHorizontalAlignment(SwingConstants.CENTER);
-        addProduct.setVerticalAlignment(SwingConstants.CENTER); // Keep
 
+
+        JButton minusBtn = new JButton("-");
+        minusBtn.setForeground(Color.WHITE);
+        minusBtn.setBackground(Color.gray);
+        minusBtn.setBorderPainted(false);
+        minusBtn.setFocusPainted(false);
+        minusBtn.setPreferredSize(new Dimension(23, 23));
+        minusBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        minusBtn.setVerticalAlignment(SwingConstants.CENTER);
+        quantityButton.add(minusBtn);
+
+        int quantity = 1;
+        JLabel quantityLabel = new JLabel(String.valueOf(quantity));
+        quantityLabel.setForeground(Color.WHITE);
+        quantityButton.add(quantityLabel);
+
+        JButton plusBtn = new JButton("+");
+        plusBtn.setForeground(Color.WHITE);
+        plusBtn.setBackground(Color.gray);
+        plusBtn.setBorderPainted(false);
+        plusBtn.setFocusPainted(false);
+        plusBtn.setPreferredSize(new Dimension(23, 23));
+        plusBtn.setHorizontalAlignment(SwingConstants.CENTER);
+        plusBtn.setVerticalAlignment(SwingConstants.CENTER);
+        quantityButton.add(plusBtn);
+
+        eastPanel.add(quantityButton, BorderLayout.SOUTH);
+
+        productItemSum.add(eastPanel, BorderLayout.EAST);
+
+        JLabel lineText = new JLabel("__________________________________");
+        lineText.setForeground(Color.WHITE);
+        lineText.setBorder(BorderFactory.createEmptyBorder(0,0,10,0));
+        productItemSum.add(lineText, BorderLayout.SOUTH);
+
+
+
+
+
+
+        return productItemSum;
 
 
 
@@ -457,37 +589,4 @@ class orderItemPanel extends JPanel{
 
 
 }
-
-
-
-class productItem extends JPanel{
-
-    public productItem(){
-        setBackground(Color.decode("#111010"));
-        setPreferredSize(new Dimension(150,250));
-        setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
-
-    }
-
-}
-
-class orderSummary extends JPanel{
-    public orderSummary(){
-        setBackground(Color.decode("#383737"));
-        setLayout(null);
-        setBounds(670,95, 260,300);
-
-    }
-
-}
-
-class subTotal extends  JPanel{
-    public subTotal(){
-        setBackground(Color.decode("#383737"));
-        setLayout(null);
-        setBounds(670,400, 260,150);
-    }
-}
-
-
 
