@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -13,34 +16,36 @@ public class posSystem extends JFrame {
 
 
         //JFRAME:
-      setSize(1280,720);
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setLayout(null);
-      setResizable(false);
+        setSize(1280,720);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+        setResizable(false);
 
 
-      //SYSTEM ICON
-      ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
-      setIconImage(systemIcon.getImage());
-      setTitle("PCU-POS");
+        //SYSTEM ICON
+        ImageIcon systemIcon = new ImageIcon("cropped-PCU-logo.png");
+        setIconImage(systemIcon.getImage());
+        setTitle("PCU-POS");
 
-      //SYSTEM BG COLOR
+        //SYSTEM BG COLOR
         getContentPane().setBackground(Color.decode("#021526"));
 
 
-      //ADDING SECTIONS & SYSTEM COMPONENTS:
+        //ADDING SECTIONS & SYSTEM COMPONENTS:
         navSection = new navigationPanel();
         add(navSection);
         orderItemSection = new orderItemPanel();
         add(orderItemSection);
-
-
         setVisible(true);
+
     }
 
     public static void main(String[] args){
         new posSystem();
     }
+
+
+
 
 }
 
@@ -107,6 +112,15 @@ class navigationPanel extends JPanel{
         orderLabel.setBounds(57, 150, 113, 18);
         add(orderLabel);
 
+
+        orderLabel.addMouseListener(new MouseAdapter() { // to log out
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new orderSummary();
+
+            }
+        });
+
         JLabel ohLabel = new JLabel();
         ohLabel.setForeground(Color.decode("#ffffff"));
         ohLabel.setFont(navFont); // Corrected: Use ohLabel.setFont()
@@ -141,13 +155,25 @@ class navigationPanel extends JPanel{
         logoutLabel.setText("Log out");
         logoutLabel.setBounds(57, 600, 57, 18); // Adjusted height to 18 for consistency
         add(logoutLabel);
-
         repaint();
 
+        logoutLabel.addMouseListener(new MouseAdapter() { // to log out
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(logoutLabel);
+                if (topFrame != null) {
+                    topFrame.dispose();
+                }
+             new logInSection();
+
+            }
+        });
 
     }
 
 }
+
+
 
 class orderItemPanel extends JPanel{
 
@@ -273,10 +299,3 @@ class subTotal extends  JPanel{
         setBounds(670,400, 260,150);
     }
 }
-
-
-
-
-
-
-
