@@ -1,3 +1,5 @@
+package POS_SYSTEM;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -16,6 +18,7 @@ public class registerUser extends javax.swing.JFrame {
     public registerUser() {
         setLayout(null);
         setResizable(false);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         initComponents();
         jLabel9.setVisible(false);
@@ -148,9 +151,9 @@ public class registerUser extends javax.swing.JFrame {
             }
         });
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cropped-PCU-logo.png"))); // NOI18N
-        jLabel8.setText("jLabel8");
-        jLabel8.setPreferredSize(new java.awt.Dimension(200, 200));
+//        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cropped-PCU-logo.png"))); // NOI18N
+//        jLabel8.setText("jLabel8");
+//        jLabel8.setPreferredSize(new java.awt.Dimension(200, 200));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);

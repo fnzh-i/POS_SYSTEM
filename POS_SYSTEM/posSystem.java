@@ -1,7 +1,7 @@
-import jakarta.xml.bind.JAXBContext;
+package POS_SYSTEM;
 
 import javax.swing.*;
-import javax.swing.border.Border;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -9,8 +9,13 @@ import java.io.File;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-public class posSystem extends JFrame {
+public class posSystem extends javax.swing.JFrame {
+    public static void main(String[] args){
+        new logInSection();
+//        orderSummary order = new orderSummary();
+//        order.orderSumm(200.00, 120.00);
 
+    }
     private navigationPanel navSection;
     private orderItemPanel orderItemSection;
 
@@ -18,22 +23,23 @@ public class posSystem extends JFrame {
 
 
         //JFRAME:
-      setSize(1280,720);
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setLayout(new BorderLayout());
-      setResizable(false);
+        setSize(1280,720);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        setResizable(false);
 
 
-      //SYSTEM ICON
-      ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
-      setIconImage(systemIcon.getImage());
-      setTitle("PCU-POS");
+        //SYSTEM ICON
+        ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
+        setIconImage(systemIcon.getImage());
+        setTitle("PCU-POS");
 
-      //SYSTEM BG COLOR
+        //SYSTEM BG COLOR
         getContentPane().setBackground(Color.decode("#021526"));
 
 
-      //ADDING SECTIONS & SYSTEM COMPONENTS:
+        //ADDING SECTIONS & SYSTEM COMPONENTS:
         navSection = new navigationPanel();
         add(navSection, BorderLayout.WEST);
         orderItemSection = new orderItemPanel();
@@ -43,9 +49,6 @@ public class posSystem extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String[] args){
-        new posSystem();
-    }
 
 }
 
@@ -134,9 +137,7 @@ class navigationPanel extends JPanel{
 
         add(navOptionsPanel, BorderLayout.CENTER); // Add the options panel to the center
 
-
         repaint();
-
 
     }
 
@@ -589,4 +590,5 @@ class orderItemPanel extends JPanel{
 
 
 }
+
 
