@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 public class posSystem extends javax.swing.JFrame {
     public static void main(String[] args){
         new logInSection();
-//        orderSummary order = new orderSummary();
-//        order.orderSumm(200.00, 120.00);
 
     }
     private navigationPanel navSection;
@@ -45,6 +43,8 @@ public class posSystem extends javax.swing.JFrame {
         orderItemSection = new orderItemPanel();
         add(orderItemSection, BorderLayout.CENTER);
 
+        orderSummary order = new orderSummary();
+        order.orderSumm(200.00, 120.00);
 
         setVisible(true);
     }

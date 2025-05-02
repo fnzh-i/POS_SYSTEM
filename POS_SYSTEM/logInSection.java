@@ -111,8 +111,12 @@ public class logInSection extends javax.swing.JFrame {
             if (logInPage.authenticateUser(userName, password)){
                 JOptionPane.showMessageDialog(this,"Login successful!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
 
-               new posSystem();
-               dispose();
+                if (userName != null && !userName.isEmpty()) {
+                    orderSummary.setUsrname(userName);
+                }
+                new posSystem();
+                dispose();
+
             }
             else {
                 JOptionPane.showMessageDialog(this,"Invalid username or password","Login Failed", JOptionPane.ERROR_MESSAGE);
@@ -126,6 +130,7 @@ public class logInSection extends javax.swing.JFrame {
             public void mouseClicked(MouseEvent e){
                 new registerUser(); // CHANGE TO REGISRATION FORM
                 dispose();
+
             }
             @Override
             public void mouseEntered(MouseEvent e){
@@ -141,5 +146,8 @@ public class logInSection extends javax.swing.JFrame {
             }
         });
         setVisible(true);
+
+
     }
+
 }
