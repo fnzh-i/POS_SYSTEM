@@ -1,4 +1,4 @@
-package POS_SYSTEM;
+
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -41,7 +41,7 @@ public class posSystem extends javax.swing.JFrame {
         orderItemSection = new orderItemPanel();
         add(orderItemSection, BorderLayout.CENTER);
 
-        orderSummary order = new orderSummary();
+        orderSummaryFile order = new orderSummaryFile();
         order.orderSumm(200.00, 120.00);
 
         setVisible(true);
@@ -183,12 +183,19 @@ class navigationPanel extends JPanel{
 
 class orderItemPanel extends JPanel {
 
+    private final JPanel orderSummary;
+    private subTotalPanel subtotalPanel;
+
+    int[] quantity = {1};
+    Font sz12 = FontUtils.loadFont(12f);
+    Font sz13 = FontUtils.loadFont(13f);
+    Font sz15 = FontUtils.loadFont(15f);
+    Font sz16 = FontUtils.loadFont(16f);
+    Font sz17 = FontUtils.loadFont(17f);
+
+
     orderItemPanel() {
-        Font sz12 = FontUtils.loadFont(12f);
-        Font sz13 = FontUtils.loadFont(13f);
-        Font sz15 = FontUtils.loadFont(15f);
-        Font sz16 = FontUtils.loadFont(16f);
-        Font sz17 = FontUtils.loadFont(17f);
+
 
         //ORDER ITEM PANEL
         Font oiFont = FontUtils.loadFont(17f);
@@ -250,7 +257,6 @@ class orderItemPanel extends JPanel {
         productItemPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
 
-
         JScrollPane productScrollPane = new JScrollPane(productItemPanel);
         productScrollPane.setBorder(null);
         productScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -264,7 +270,7 @@ class orderItemPanel extends JPanel {
 
         //FOR ORDER SUMMARY AND ORDER PROCESS:
 
-        JPanel orderSummary = new JPanel();
+       orderSummary = new JPanel();
         orderSummary.setPreferredSize(new Dimension(550, 1080));
         orderSummary.setBackground(Color.decode("#021526"));
         orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
@@ -299,9 +305,6 @@ class orderItemPanel extends JPanel {
         orderListScroll.setOpaque(false);
 
 
-
-
-
         JScrollBar verticalScrollBar2 = orderListScroll.getVerticalScrollBar();
         verticalScrollBar2.setUnitIncrement(30);
         verticalScrollBar2.setBlockIncrement(100);
@@ -309,35 +312,11 @@ class orderItemPanel extends JPanel {
 
 
         //FOR SUBTOTAL:
-        JPanel subTotal = new JPanel();
-        subTotal.setBackground(Color.decode("#424040"));
-        subTotal.setPreferredSize(new Dimension(485, 200));
-        subTotal.setMaximumSize(new Dimension(485, 200));
-        subTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
-        subTotal.setLayout(new BoxLayout(subTotal, BoxLayout.Y_AXIS));
-        subTotal.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
+        new subTotalPanel();
 
 
-        JLabel stText = new JLabel("Sub Total: ");
-        stText.setFont(sz15);
-        stText.setForeground(Color.WHITE);
-        subTotal.add(stText);
 
-        JLabel stTax = new JLabel("Tax: ");
-        stTax.setFont(sz15);
-        stTax.setForeground(Color.WHITE);
-        subTotal.add(stTax);
 
-        JLabel stLine = new JLabel("__________________________________");
-        stTax.setFont(sz15);
-        stLine.setForeground(Color.WHITE);
-        subTotal.add(stLine);
-
-        JLabel stTotal = new JLabel("Total: ");
-        stTotal.setFont(sz16);
-        stTotal.setForeground(Color.WHITE);
-        subTotal.add(stTotal);
-        orderSummary.add(subTotal);
 
 
         //PROCESS BUTTONS:
@@ -375,7 +354,15 @@ class orderItemPanel extends JPanel {
         String ItemImg = "Images/Sample Product Images/Piattos-Cheese-40g.png";
         double ItemPrice = 15.00;
 
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice,orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
 
 //        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
 //        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
@@ -474,86 +461,140 @@ class orderItemPanel extends JPanel {
         addProduct.setFont(font.deriveFont(Font.PLAIN, 14f));
         addProduct.setHorizontalAlignment(SwingConstants.CENTER);
         addProduct.setVerticalAlignment(SwingConstants.CENTER);
+
         addProduct.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                orderList.add(productItemSummary("Jack n' Jill Piattos CHEESE", "40g", sz17, 15.00));
+                // Update the order list
+                orderList.add(productItemSummary(text, productSize, sz17, price));
                 orderList.revalidate();
                 orderList.repaint();
+
+
+
+                subTotalPanel.updateSubtotal(price);
+
+
             }
         });
         bottomPannel.add(addProduct, BorderLayout.EAST);
         productItem.add(bottomPannel, BorderLayout.SOUTH);
 
 
-
-
         return productItem;
     }
 
     public JPanel productItemSummary(String productName, String productSize, Font font, double price) {
-
         JPanel orderItemPanel = new JPanel();
         orderItemPanel.setOpaque(false);
-        orderItemPanel.setLayout(new FlowLayout(FlowLayout.LEFT,5,0));
-        orderItemPanel.setBorder(BorderFactory.createEmptyBorder(10,5,0,0));
+        orderItemPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        orderItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 0, 0));
 
+        final int[] quantity = {1};
+        JLabel orderItemLabel = new JLabel();
+        orderItemLabel.setFont(font);
+        orderItemLabel.setForeground(Color.WHITE);
+        orderItemLabel.setText(quantity[0] + "x | " + productName + ", " + productSize + ", ₱ " + price);
 
-        int Quantity = 1;
         JButton incr = new JButton("Inc");
-
         incr.setFont(font);
         incr.setForeground(Color.decode("#F9A61A"));
         incr.setBackground(Color.gray);
         incr.setBorderPainted(false);
         incr.setFocusPainted(false);
+        incr.addActionListener(e -> {
+            quantity[0]++;
+            orderItemLabel.setText(quantity[0] + "x | " + productName + ", " + productSize + ", ₱ " + price);
+            subTotalPanel.updateSubtotal(price);
+        });
 
         JButton decr = new JButton("Dec");
-
         decr.setFont(font);
         decr.setForeground(Color.decode("#BD1212"));
         decr.setBackground(Color.gray);
         decr.setBorderPainted(false);
         decr.setFocusPainted(false);
+        decr.addActionListener(e -> {
+            if (quantity[0] > 1) {
+                quantity[0]--;
+                orderItemLabel.setText(quantity[0] + "x | " + productName + ", " + productSize + ", ₱ " + price);
+                subTotalPanel.updateSubtotal(-price);
+            }
+        });
 
-        JLabel orderItem = new JLabel();
-
-        orderItem.setFont(font);
-        orderItem.setForeground(Color.WHITE);
-        orderItem.setText(Quantity + "x" + " | " + productName + ", " + productSize + ", " + "₱ " + price);
-
-        orderItemPanel.add(orderItem);
+        orderItemPanel.add(orderItemLabel);
         orderItemPanel.add(incr);
         orderItemPanel.add(decr);
+
         return orderItemPanel;
 
     }
-}
 
+    class subTotalPanel extends JPanel {
+        private static double subtotal = 0.0;
+        private static double tax = 0.0;
+        private static double total = 0.0;
+        private static JLabel subtotalLabel;
+        private static JLabel taxLabel;
+        private static JLabel totalLabel;
 
+        subTotalPanel() {
+            JPanel subTotal = new JPanel();
+            subTotal.setBackground(Color.decode("#424040"));
+            subTotal.setPreferredSize(new Dimension(485, 200));
+            subTotal.setMaximumSize(new Dimension(485, 200));
+            subTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
+            subTotal.setLayout(new BoxLayout(subTotal, BoxLayout.Y_AXIS));
+            subTotal.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
 
-class productItem extends JPanel{
+            JLabel stText = new JLabel("Sub Total: ");
+            stText.setFont(sz15);
+            stText.setForeground(Color.WHITE);
+            subTotal.add(stText);
 
-    public productItem(){
-        setBackground(Color.decode("#111010"));
-        setPreferredSize(new Dimension(150,250));
-        setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
+            subtotalLabel = new JLabel("₱" + String.format("%.2f", subtotal)); //
+            subtotalLabel.setFont(sz15);
+            subtotalLabel.setForeground(Color.WHITE);
+            subTotal.add(subtotalLabel);
+
+            taxLabel = new JLabel("Tax: ₱" + String.format("%.2f", tax)); //
+            taxLabel.setFont(sz15);
+            taxLabel.setForeground(Color.WHITE);
+            subTotal.add(taxLabel);
+
+            JLabel stLine = new JLabel("__________________________________");
+            stLine.setFont(sz15);
+            stLine.setForeground(Color.WHITE);
+            subTotal.add(stLine);
+
+            JLabel stTotalText = new JLabel("Total: ");
+            stTotalText.setFont(sz16);
+            stTotalText.setForeground(Color.WHITE);
+            subTotal.add(stTotalText);
+
+            totalLabel = new JLabel("₱" + String.format("%.2f", total)); 
+            totalLabel.setFont(sz16);
+            totalLabel.setForeground(Color.WHITE);
+            subTotal.add(totalLabel);
+
+            orderSummary.add(subTotal);
+        }
+
+        // Method to update the subtotal, tax, and total
+        public static void updateSubtotal(double amount) {
+            double vatRate = 0.12; 
+            subtotal += amount;
+            tax = subtotal * vatRate; 
+            total = subtotal + tax; 
+
+            if(subtotal < 0) subtotal = 0; // to avoid negative
+            if(total < 0) total = 0;
+            if(tax < 0) tax = 0;
+
+            subtotalLabel.setText("₱" + String.format("%.2f", subtotal));
+            taxLabel.setText("Tax: ₱" + String.format("%.2f", tax));
+            totalLabel.setText("₱" + String.format("%.2f", total));
+        }
 
     }
-
 }
-
-class subTotal extends  JPanel{
-    public subTotal(){
-        setBackground(Color.decode("#383737"));
-        setLayout(null);
-        setBounds(670,400, 260,150);
-    }
-}
-
-
-
-
-
-
-
