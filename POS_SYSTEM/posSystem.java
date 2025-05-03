@@ -48,7 +48,8 @@ public class posSystem extends javax.swing.JFrame {
     }
 
     public static void main(String[] args){
-        new logInSection();
+//        new logInSection();
+        new posSystem();
     }
 
 }
@@ -138,9 +139,7 @@ class navigationPanel extends JPanel{
 
         add(navOptionsPanel, BorderLayout.CENTER); // Add the options panel to the center
 
-
         repaint();
-
 
     }
 
@@ -156,9 +155,6 @@ class navigationPanel extends JPanel{
         navButton.setAlignmentX(Component.CENTER_ALIGNMENT);   // Align button to the left in BoxLayout
         navButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         navButton.setBorder(BorderFactory.createEmptyBorder(20,40,20,0));
-
-
-
 
         //HOVER EFFECTS:
         navButton.addMouseListener(new MouseAdapter() {
@@ -266,7 +262,6 @@ class orderItemPanel extends JPanel {
 
         mainConts.add(productScrollPane);
 
-
         //FOR ORDER SUMMARY AND ORDER PROCESS:
 
         JPanel orderSummary = new JPanel();
@@ -373,14 +368,22 @@ class orderItemPanel extends JPanel {
 
         orderSummary.add(orderButton);
 
+        new productItemsList();
 
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+        String ItemName = "Jack n' Jill Piattos";
+        String ItemSize = "40g";
+        String ItemImg = "Images/Sample Product Images/Piattos-Cheese-40g.png";
+        double ItemPrice = 15.00;
+
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice,orderList))));
+
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
 
         add(mainConts, BorderLayout.CENTER);
         add(orderSummary, BorderLayout.EAST);
@@ -498,6 +501,7 @@ class orderItemPanel extends JPanel {
 
         int Quantity = 1;
         JButton incr = new JButton("Inc");
+
         incr.setFont(font);
         incr.setForeground(Color.decode("#F9A61A"));
         incr.setBackground(Color.gray);
@@ -505,6 +509,7 @@ class orderItemPanel extends JPanel {
         incr.setFocusPainted(false);
 
         JButton decr = new JButton("Dec");
+
         decr.setFont(font);
         decr.setForeground(Color.decode("#BD1212"));
         decr.setBackground(Color.gray);
