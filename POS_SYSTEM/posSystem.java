@@ -1,4 +1,4 @@
-import jakarta.xml.bind.JAXBContext;
+package POS_SYSTEM;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -11,43 +11,44 @@ import java.io.File;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-public class posSystem extends JFrame {
+public class posSystem extends javax.swing.JFrame {
 
     private navigationPanel navSection;
     private orderItemPanel orderItemSection;
 
     public posSystem(){
 
-
         //JFRAME:
-      setSize(1920,1080);
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setExtendedState(JFrame.MAXIMIZED_BOTH);
-      setLayout(new BorderLayout());
-      setResizable(false);
+        setSize(1920,1080);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLayout(new BorderLayout());
+        setResizable(false);
 
 
-      //SYSTEM ICON
-      ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
-      setIconImage(systemIcon.getImage());
-      setTitle("PCU-POS");
+        //SYSTEM ICON
+        ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
+        setIconImage(systemIcon.getImage());
+        setTitle("PCU-POS");
 
-      //SYSTEM BG COLOR
+        //SYSTEM BG COLOR
         getContentPane().setBackground(Color.decode("#021526"));
 
 
-      //ADDING SECTIONS & SYSTEM COMPONENTS:
+        //ADDING SECTIONS & SYSTEM COMPONENTS:
         navSection = new navigationPanel();
         add(navSection, BorderLayout.WEST);
         orderItemSection = new orderItemPanel();
         add(orderItemSection, BorderLayout.CENTER);
 
+        orderSummary order = new orderSummary();
+        order.orderSumm(200.00, 120.00);
 
         setVisible(true);
     }
 
     public static void main(String[] args){
-        new posSystem();
+        new logInSection();
     }
 
 }
@@ -510,10 +511,6 @@ class orderItemPanel extends JPanel {
         decr.setBorderPainted(false);
         decr.setFocusPainted(false);
 
-
-
-
-
         JLabel orderItem = new JLabel();
 
         orderItem.setFont(font);
@@ -536,16 +533,6 @@ class productItem extends JPanel{
         setBackground(Color.decode("#111010"));
         setPreferredSize(new Dimension(150,250));
         setBorder(BorderFactory.createLineBorder(Color.WHITE,2));
-
-    }
-
-}
-
-class orderSummary extends JPanel{
-    public orderSummary(){
-        setBackground(Color.decode("#383737"));
-        setLayout(null);
-        setBounds(670,95, 260,300);
 
     }
 
