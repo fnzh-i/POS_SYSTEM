@@ -1,5 +1,8 @@
 
 
+import POS_SYSTEM.productItemsList;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -41,7 +44,7 @@ public class posSystem extends javax.swing.JFrame {
         orderItemSection = new orderItemPanel();
         add(orderItemSection, BorderLayout.CENTER);
 
-        orderSummaryFile order = new orderSummaryFile();
+        POS.orderSummaryFile order = new POS.orderSummaryFile();
         order.orderSumm(200.00, 120.00);
 
         setVisible(true);
@@ -270,7 +273,7 @@ class orderItemPanel extends JPanel {
 
         //FOR ORDER SUMMARY AND ORDER PROCESS:
 
-       orderSummary = new JPanel();
+        orderSummary = new JPanel();
         orderSummary.setPreferredSize(new Dimension(550, 1080));
         orderSummary.setBackground(Color.decode("#021526"));
         orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
@@ -349,28 +352,21 @@ class orderItemPanel extends JPanel {
 
         new productItemsList();
 
-        String ItemName = "Jack n' Jill Piattos";
-        String ItemSize = "40g";
-        String ItemImg = "Images/Sample Product Images/Piattos-Cheese-40g.png";
-        double ItemPrice = 15.00;
+        String[] productName = {"Jack n' Jill Piattos", "Jack n' Jill Nova","Burger","Hotdog","Coke Mismo", "Royal Mismo","Caldereta","Rice"};
+        String[] productSize = {"40g", "40g","1pc","1pc","295ml", "295ml","1 serving","1 cup"};
+        String[] productImg = {"Images/Sample Product Images/Piattos-Cheese-40g.png", "Images/Sample Product Images/Jack n Jill Nova .png","Images/Sample Product Images/Burger .png","Images/Sample Product Images/Hotdog.png","Images/Sample Product Images/Coke Mismo.png", "Images/Sample Product Images/Royal Mismo.png","Images/Sample Product Images/Caldereta.png","Images/Sample Product Images/Rice.png"};
+        double[] productPrice = {15.00,15.00,20.00,20.00,15.00,15.00,50.00,10.00};
+        String[] productCategory = {"Snack","Snack","Snack","Snack","Drinks","Drinks","Meal", "Meal"};
 
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
-        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(ItemName, ItemSize, ItemImg, sz15, ItemPrice, orderList))));
 
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
-//        productItemPanel.add(createProductItem("Jack'n Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", sz15, 15.00,orderList));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[0], productSize[0], productImg[0], sz16, productPrice[0], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[1], productSize[1], productImg[1], sz16, productPrice[1], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[2], productSize[2], productImg[2], sz16, productPrice[2], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[3], productSize[3], productImg[3], sz16, productPrice[3], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[4], productSize[4], productImg[4], sz16, productPrice[4], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[5], productSize[5], productImg[5], sz16, productPrice[5], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[6], productSize[6], productImg[6], sz16, productPrice[6], orderList))));
+        productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[7], productSize[7], productImg[7], sz16, productPrice[7], orderList))));
 
         add(mainConts, BorderLayout.CENTER);
         add(orderSummary, BorderLayout.EAST);
@@ -407,12 +403,15 @@ class orderItemPanel extends JPanel {
     public JPanel createProductItem(String text, String productSize, String productImg, Font font, double price, JPanel orderList) {
         Font sz17 = FontUtils.loadFont(17f);
 
+        JPanel productItemCont = new JPanel();
+        productItemCont.setPreferredSize(new Dimension(100,260));
+        productItemCont.setOpaque(false);
+
         JPanel productItem = new JPanel();
         productItem.setBackground(Color.decode("#111010"));
-        productItem.setPreferredSize(new Dimension(100, 250));
-        productItem.setMaximumSize(new Dimension(100, 250));
+        productItem.setPreferredSize(new Dimension(180, 250));
+        productItem.setMaximumSize(new Dimension(300, 250));
         productItem.setLayout(new BorderLayout(5, 5));
-        productItem.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         productItem.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
 
         ImageIcon originalIcon = new ImageIcon(productImg);
@@ -480,8 +479,9 @@ class orderItemPanel extends JPanel {
         bottomPannel.add(addProduct, BorderLayout.EAST);
         productItem.add(bottomPannel, BorderLayout.SOUTH);
 
+        productItemCont.add(productItem);
 
-        return productItem;
+        return productItemCont;
     }
 
     public JPanel productItemSummary(String productName, String productSize, Font font, double price) {
@@ -496,7 +496,7 @@ class orderItemPanel extends JPanel {
         orderItemLabel.setForeground(Color.WHITE);
         orderItemLabel.setText(quantity[0] + "x | " + productName + ", " + productSize + ", ₱ " + price);
 
-        JButton incr = new JButton("Inc");
+        JButton incr = new JButton("Add");
         incr.setFont(font);
         incr.setForeground(Color.decode("#F9A61A"));
         incr.setBackground(Color.gray);
@@ -508,7 +508,7 @@ class orderItemPanel extends JPanel {
             subTotalPanel.updateSubtotal(price);
         });
 
-        JButton decr = new JButton("Dec");
+        JButton decr = new JButton("Delete");
         decr.setFont(font);
         decr.setForeground(Color.decode("#BD1212"));
         decr.setBackground(Color.gray);
@@ -521,6 +521,7 @@ class orderItemPanel extends JPanel {
                 subTotalPanel.updateSubtotal(-price);
             }
         });
+
 
         orderItemPanel.add(orderItemLabel);
         orderItemPanel.add(incr);
@@ -572,7 +573,7 @@ class orderItemPanel extends JPanel {
             stTotalText.setForeground(Color.WHITE);
             subTotal.add(stTotalText);
 
-            totalLabel = new JLabel("₱" + String.format("%.2f", total)); 
+            totalLabel = new JLabel("₱" + String.format("%.2f", total));
             totalLabel.setFont(sz16);
             totalLabel.setForeground(Color.WHITE);
             subTotal.add(totalLabel);
@@ -582,10 +583,10 @@ class orderItemPanel extends JPanel {
 
         // Method to update the subtotal, tax, and total
         public static void updateSubtotal(double amount) {
-            double vatRate = 0.12; 
+            double vatRate = 0.12;
             subtotal += amount;
-            tax = subtotal * vatRate; 
-            total = subtotal + tax; 
+            tax = subtotal * vatRate;
+            total = subtotal + tax;
 
             if(subtotal < 0) subtotal = 0; // to avoid negative
             if(total < 0) total = 0;
