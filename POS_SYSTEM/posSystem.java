@@ -1,4 +1,4 @@
-
+package POS_SYSTEM;
 
 import POS_SYSTEM.productItemsList;
 import org.apache.commons.math3.stat.descriptive.summary.Product;
@@ -351,6 +351,11 @@ class orderItemPanel extends JPanel {
         orderSummary.add(orderButton);
 
         new productItemsList();
+
+        String ItemName = "Jack n' Jill Piattos";
+        String ItemSize = "40g";
+        String ItemImg = "Images/Sample Product Images/Piattos-Cheese-40g.png";
+        double ItemPrice = 15.00;
 
         String[] productName = {"Jack n' Jill Piattos", "Jack n' Jill Nova","Burger","Hotdog","Coke Mismo", "Royal Mismo","Caldereta","Rice"};
         String[] productSize = {"40g", "40g","1pc","1pc","295ml", "295ml","1 serving","1 cup"};
