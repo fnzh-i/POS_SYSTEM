@@ -62,12 +62,12 @@ public class logInPage extends logInSection{
         }
     }
 
-    public static boolean authenticateUser(String userName, String password) {
+    public static User authenticateUser(String userName, String password) {
         List<List<Object>> data = readExcel(FILE_PATH);
         for (List<Object> row : data) {
-            // Skip null rows or rows with insufficient data
             if (row == null || row.size() < 5) continue;
 
+            Object userTypeObj = row.get(0);
             Object usernameObj = row.get(3);
             Object passwordObj = row.get(4);
 
@@ -75,7 +75,9 @@ public class logInPage extends logInSection{
 
             if (userName.equals(usernameObj.toString()) &&
                     password.equals(passwordObj.toString())) {
-                return true;
+                String userType = userTypeObj.toString();
+                orderSummary.getInstance().setUsrname(userName);
+                return new User(userName, userType); // Return User object with role
             }
         }
 
@@ -83,6 +85,6 @@ public class logInPage extends logInSection{
                 "User or password was not found in database",
                 "Login Failed",
                 JOptionPane.ERROR_MESSAGE);
-        return false;
+        return null;
     }
 }

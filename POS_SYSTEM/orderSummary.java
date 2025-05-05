@@ -12,15 +12,22 @@ public class orderSummary {
     private double vatRate;
     private double netTotal;
     private double totalVat;
+    private static orderSummary instance;
     private static String usrname;
 
+    public static orderSummary getInstance() {
+        if (instance == null) {
+            instance = new orderSummary();
+        }
+        return instance;
+    }
 
     public static String getUsrname(){
         return usrname;
     }
 
-    public static void setUsrname(String usrname) {
-        orderSummary.usrname = usrname;
+    public void setUsrname(String usrname) {
+        this.usrname = usrname;
     }
 
     public <doube> String orderSumm(doube cashTend, doube total){

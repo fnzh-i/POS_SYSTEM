@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class logInSection extends javax.swing.JFrame {
+public class logInSection extends JFrame {
     // private static final Logger log = LoggerFactory.getLogger(logInSection.class); not yet needed atm
 
     public logInSection(){
@@ -102,24 +102,32 @@ public class logInSection extends javax.swing.JFrame {
 
         logInBtn.addActionListener(e -> {
             String userName = userTextField.getText().trim();
-            String password = new String (passTextField.getPassword()).trim();
+            String password = new String(passTextField.getPassword()).trim();
 
-            if (userName.isEmpty() && password.isEmpty()){
-                JOptionPane.showMessageDialog(this,"Please enter both username and password","Login Error", JOptionPane.ERROR_MESSAGE);
+            if (userName.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Please enter both username and password",
+                        "Login Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (logInPage.authenticateUser(userName, password)){
-                JOptionPane.showMessageDialog(this,"Login successful!", "Login Success", JOptionPane.INFORMATION_MESSAGE);
+
+            // Get authenticated user with role from logInPage
+            User authenticatedUser = logInPage.authenticateUser(userName, password);
+
+            if (authenticatedUser != null) {
+                JOptionPane.showMessageDialog(this, "Login successful!",
+                        "Login Success", JOptionPane.INFORMATION_MESSAGE);
 
                 if (userName != null && !userName.isEmpty()) {
-                    orderSummary.setUsrname(userName);
+                    orderSummary.getInstance().setUsrname(userName);
                 }
-                new posSystem();
-                dispose();
 
+                // Pass the authenticated user with role to posSystem
+                new posSystem(authenticatedUser);
+                this.dispose();
             }
             else {
-                JOptionPane.showMessageDialog(this,"Invalid username or password","Login Failed", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Invalid username or password",
+                        "Login Failed", JOptionPane.ERROR_MESSAGE);
                 passTextField.setText("");
                 userTextField.requestFocus();
             }
