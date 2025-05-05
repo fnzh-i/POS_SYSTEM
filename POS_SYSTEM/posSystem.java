@@ -172,6 +172,9 @@
             if (text.equals("Logout")) {
                 navButton.addActionListener(e -> logout());
             }
+            if (text.equals("Menu Management")) {
+                navButton.addActionListener(e -> new MenuManagement().setVisible(true));
+            }
             return navButton;
         }
 
