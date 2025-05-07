@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class processOrderPanel extends JPanel {
+    orderItemPanel oIPanel = new orderItemPanel();
 
     processOrderPanel() {
         Font sz16 = FontUtils.loadFont(16f);
@@ -11,8 +14,8 @@ public class processOrderPanel extends JPanel {
 
         JPanel processOrder = new JPanel();
         processOrder.setLayout(new FlowLayout(FlowLayout.LEFT, 10,10));
-        processOrder.setPreferredSize(new Dimension(980,980));
-        processOrder.setMaximumSize(new Dimension(980,980));
+        processOrder.setPreferredSize(new Dimension(1240,980));
+        processOrder.setMaximumSize(new Dimension(1240,980));
         processOrder.setBackground(Color.DARK_GRAY);
 
 
@@ -168,6 +171,7 @@ public class processOrderPanel extends JPanel {
             cancelBtn.setBorderPainted(false);
             cancelBtn.setFocusPainted(false);
             cancelBtn.setFont(sz16);
+
             processButtonPanel.add(cancelBtn);
 
             JButton processBtn = new JButton("Confirm Payment");
@@ -190,24 +194,6 @@ public class processOrderPanel extends JPanel {
 
 
 
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Process Order Panel");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(new Dimension(980, 980)); // Adjust frame size to fit content
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-            frame.getContentPane().setBackground(Color.decode("#03346E"));
-
-
-            processOrderPanel panel = new processOrderPanel();
-            frame.add(panel); // Add the panel to the frame
-
-            frame.setVisible(true);
-
-        });
     }
 
 }
