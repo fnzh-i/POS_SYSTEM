@@ -17,6 +17,7 @@ public class posSystem extends javax.swing.JFrame {
 
     private navigationPanel navSection;
     private orderItemPanel orderItemSection;
+    public processOrderPanel orderProcess;
 
     public posSystem(){
 
@@ -26,6 +27,7 @@ public class posSystem extends javax.swing.JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLayout(new BorderLayout());
         setResizable(false);
+
 
 
         //SYSTEM ICON
@@ -42,6 +44,12 @@ public class posSystem extends javax.swing.JFrame {
         add(navSection, BorderLayout.WEST);
         orderItemSection = new orderItemPanel();
         add(orderItemSection, BorderLayout.CENTER);
+//        orderProcess = new processOrderPanel();
+//        orderProcess.setVisible(true);
+//        add(orderProcess);
+
+
+
 
         POS.orderSummaryFile order = new POS.orderSummaryFile();
         order.orderSumm(200.00, 120.00);
@@ -189,11 +197,16 @@ class navigationPanel extends JPanel{
 
 
 
-class orderItemPanel extends JPanel {
+class orderItemPanel extends JPanel { ;
 
-    private final JPanel processPanel;
-    private final JPanel orderSummary;
+    public JPanel orderProcess;
+
+
+    public JPanel orderSummary;
     private subTotalPanel subtotalPanel;
+    public JPanel mainConts;
+
+
 
     int[] quantity = {1};
     Font sz12 = FontUtils.loadFont(12f);
@@ -212,7 +225,7 @@ class orderItemPanel extends JPanel {
         setPreferredSize(new Dimension(980, getHeight()));
         setLayout(new BorderLayout());
 
-        JPanel mainConts = new JPanel();
+        mainConts = new JPanel();
         mainConts.setLayout(new BoxLayout(mainConts, BoxLayout.Y_AXIS));
         mainConts.setBackground(Color.decode("#021526"));
         mainConts.setBorder(BorderFactory.createEmptyBorder(10, 60, 0, 0));
@@ -224,13 +237,16 @@ class orderItemPanel extends JPanel {
         searchPanel.setPreferredSize(new Dimension(550, 43));
         searchPanel.setMaximumSize(new Dimension(550, 43));
         searchPanel.setLayout(new BorderLayout());
+        searchPanel.setBorder(null);
         searchPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
 
         JTextField searchBar = new JTextField();
         searchBar.setBackground(Color.decode("#898b8f"));
         searchBar.setFont(oiFont);
         searchBar.setPreferredSize(new Dimension(450, 43));
         searchBar.setMaximumSize(new Dimension(450, 43));
+        searchPanel.setBorder(null);
         searchPanel.add(searchBar, BorderLayout.CENTER);
 
         JButton searchButton = new JButton();
@@ -283,6 +299,9 @@ class orderItemPanel extends JPanel {
         orderSummary.setPreferredSize(new Dimension(550, 1080));
         orderSummary.setBackground(Color.decode("#021526"));
         orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
+
+
+
 
 
         //DATE AND TIME:
@@ -353,6 +372,18 @@ class orderItemPanel extends JPanel {
         processBtn.setBorderPainted(false);
         processBtn.setFocusPainted(false);
         processBtn.setFont(sz16);
+        processBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainConts.setVisible(false);
+                orderSummary.setVisible(false);
+                orderProcess = new processOrderPanel();
+                add(orderProcess, BorderLayout.CENTER);
+
+
+            }
+
+        });
         orderButton.add(processBtn);
 
 
@@ -378,15 +409,14 @@ class orderItemPanel extends JPanel {
         productItemsList.add(String.valueOf(productItemPanel.add(createProductItem(productName[7], productSize[7], productImg[7], sz16, productPrice[7], orderList))));
 
 
-        processPanel = new JPanel();
-        processPanel.setPreferredSize(new Dimension(780,780));
-        processPanel.setMaximumSize(new Dimension(780,780));
+
 
 
 
         add(mainConts, BorderLayout.CENTER);
         add(orderSummary, BorderLayout.EAST);
-        add(processPanel);
+
+
 
 
     }
@@ -426,11 +456,10 @@ class orderItemPanel extends JPanel {
         productItemCont.setOpaque(false);
 
         JPanel productItem = new JPanel();
-        productItem.setBackground(Color.decode("#111010"));
+        productItem.setBackground(Color.decode("#03346E"));
         productItem.setPreferredSize(new Dimension(180, 250));
         productItem.setMaximumSize(new Dimension(300, 250));
         productItem.setLayout(new BorderLayout(5, 5));
-        productItem.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
 
         ImageIcon originalIcon = new ImageIcon(productImg);
         Image scaledImage = originalIcon.getImage().getScaledInstance(110, 110, Image.SCALE_SMOOTH);
@@ -445,7 +474,7 @@ class orderItemPanel extends JPanel {
 
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        textPanel.setBackground(Color.decode("#111010"));
+        textPanel.setBackground(Color.decode("#03346E"));
 
         JLabel productName = new JLabel(text);
         productName.setFont(font);
@@ -462,7 +491,7 @@ class orderItemPanel extends JPanel {
 
         JPanel bottomPannel = new JPanel();
         bottomPannel.setLayout(new BorderLayout());
-        bottomPannel.setBackground(Color.decode("#111010"));
+        bottomPannel.setBackground(Color.decode("#03346E"));
 
         JLabel productPrice = new JLabel();
         productPrice.setText("₱" + String.format("%.2f", price));
@@ -618,140 +647,7 @@ class orderItemPanel extends JPanel {
 
     }
 
-    class processOrderPanel extends JPanel{
 
-        processOrderPanel() {
-            Font sz16 = FontUtils.loadFont(16f);
-            Font sz20 = FontUtils.loadFont(20f);
-
-
-
-            JPanel processOrder = new JPanel();
-            processOrder.setLayout(new FlowLayout(FlowLayout.CENTER, 10,0));
-            processOrder.setPreferredSize(new Dimension(1000,1000));
-            processOrder.setMaximumSize(new Dimension(1000,1000));
-            processOrder.setBackground(Color.decode("#2D303E"));
-            processOrder.setBorder(BorderFactory.createLineBorder(Color.blue,2));
-
-
-            JPanel orderSummarySide = new JPanel();
-            orderSummarySide.setLayout(new BoxLayout(orderSummarySide, BoxLayout.Y_AXIS));
-            JLabel osLabel = new JLabel("Order Summary");
-            osLabel.setForeground(Color.white);
-            osLabel.setFont(sz20);
-
-            JButton plusButton = new JButton("+");
-            plusButton.setBorderPainted(false);
-            plusButton.setFocusPainted(false);
-            plusButton.setForeground(Color.WHITE);
-            plusButton.setBackground(Color.gray);
-            orderSummarySide.add(plusButton);
-
-
-            JPanel orderProcessSummary = new JPanel();
-            orderProcessSummary.setLayout(new BoxLayout(orderProcessSummary, BoxLayout.Y_AXIS));
-            orderProcessSummary.setBackground(Color.decode("#424040"));
-
-            JScrollPane orderSummaryScroll = new JScrollPane(orderProcessSummary);
-            orderSummaryScroll.setBorder(null);
-            orderSummaryScroll.setPreferredSize(new Dimension(300, 300));
-            orderSummaryScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
-            orderSummaryScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            orderSummaryScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            orderSummaryScroll.setBorder(BorderFactory.createEmptyBorder(0, 30, 20, 30));
-            orderSummaryScroll.setOpaque(false);
-
-
-            JScrollBar verticalScrollBar2 = orderSummaryScroll.getVerticalScrollBar();
-            verticalScrollBar2.setUnitIncrement(30);
-            verticalScrollBar2.setBlockIncrement(100);
-            orderSummarySide.add(orderSummaryScroll);
-
-
-//            JPanel subTotalPanel = new JPanel();
-//            subTotalPanel.setLayout(new BoxLayout(subTotalPanel, BoxLayout.Y_AXIS));
-//            subTotalPanel.setOpaque(false);
-//            JLabel subtotal = new JLabel("Sub total: ");
-//            subtotal.setFont(sz16);
-//            subtotal.setForeground(Color.WHITE);
-//            subtotal.add(subTotalPanel);
-//
-//            JLabel discount = new JLabel("Discount: ");
-//            discount.setFont(sz16);
-//            discount.setForeground(Color.WHITE);
-//            discount.add(subTotalPanel);
-//
-//            JLabel total = new JLabel("Total: ");
-//            total.setFont(sz16);
-//            total.setForeground(Color.WHITE);
-//            total.add(subTotalPanel);
-//
-//            JPanel cashTenderedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10,0));
-//            JLabel cashTendered = new JLabel("Cash Tendered: ");
-//            cashTendered.setForeground(Color.white);
-//            cashTendered.setFont(sz20);
-//            cashTendered.add(cashTenderedPanel);
-//
-//            JTextField cTenderedTField = new JTextField("₱ ");
-//            cTenderedTField.setOpaque(false);
-//            cTenderedTField.setFont(sz20);
-//            cTenderedTField.setForeground(Color.WHITE);
-//            cashTenderedPanel.add(cTenderedTField);
-//
-//            subTotalPanel.add(cashTenderedPanel);
-//
-//            JPanel changePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10,0));
-//            JLabel changeLabel1 = new JLabel("Cash Tendered: ");
-//            changeLabel1.setForeground(Color.white);
-//            changeLabel1.setFont(sz20);
-//            changePanel.add(changeLabel1);
-//
-//            JLabel changeLabel2 = new JLabel("₱ ");
-//            changeLabel2.setOpaque(false);
-//            changeLabel2.setFont(sz20);
-//            changeLabel2.setForeground(Color.WHITE);
-//            changePanel.add(changeLabel2);
-//
-//            subTotalPanel.add(changePanel);
-//
-//            orderSummarySide.add(subTotalPanel);
-//
-//
-//            //PROCESS BUTTONS FOP ORDER PROCESS SUMMARY:
-//            JPanel processButtonPanel = new JPanel();
-//            processButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 0));
-//            processButtonPanel.setPreferredSize(new Dimension(600, getHeight()));
-//            processButtonPanel.setOpaque(false);
-//            processButtonPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-//
-//
-//            JButton cancelBtn = new JButton("Cancel");
-//            cancelBtn.setForeground(Color.WHITE);
-//            cancelBtn.setBackground(Color.decode("#BD1212"));
-//            cancelBtn.setBorderPainted(false);
-//            cancelBtn.setFocusPainted(false);
-//            cancelBtn.setFont(sz16);
-//            processButtonPanel.add(cancelBtn);
-//
-//            JButton processBtn = new JButton("Confirm Payment");
-//            processBtn.setForeground(Color.WHITE);
-//            processBtn.setBackground(Color.decode("#F9A61A"));
-//            processBtn.setBorderPainted(false);
-//            processBtn.setFocusPainted(false);
-//            processBtn.setFont(sz16);
-//            processButtonPanel.add(processBtn);
-//
-//            orderSummarySide.add(processButtonPanel);
-
-            processOrder.add(orderSummarySide);
-
-            processPanel.add(processOrder);
-
-
-
-        }
-
-    }
 
 
 }
