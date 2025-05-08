@@ -9,9 +9,8 @@ import java.util.List;
 public class posSystem extends javax.swing.JFrame {
 
 
-    private navigationPanel navSection;
-    private orderItemPanel orderItemSection;
-    private User currentUser ;
+    private final orderItemPanel orderItemSection;
+    private final User currentUser ;
     private JPanel currentCenterPanel; // Track the current center panel
 
     public posSystem(User user) {
@@ -28,7 +27,7 @@ public class posSystem extends javax.swing.JFrame {
         setTitle("PCU-POS");
         getContentPane().setBackground(Color.decode("#021526"));
 
-        navSection = new navigationPanel(user);
+        navigationPanel navSection = new navigationPanel(user);
         add(navSection, BorderLayout.WEST);
 
         orderItemSection = new orderItemPanel(user);
@@ -55,6 +54,9 @@ public class posSystem extends javax.swing.JFrame {
         new logInSection();
     }
 
+    public orderItemPanel getOrderItemPanel() {
+        return orderItemSection;
+    }
 }
 
 class FontUtils {
@@ -160,8 +162,8 @@ class navigationPanel extends JPanel {
         navButton.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 0));
 
         navButton.addMouseListener(new MouseAdapter() {
-            private Color originalColor = navButton.getBackground();
-            private Color hoverColor = Color.decode("#035096");
+            private final Color originalColor = navButton.getBackground();
+            private final Color hoverColor = Color.decode("#035096");
 
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -184,7 +186,7 @@ class navigationPanel extends JPanel {
             navButton.addActionListener(e -> {
                 orderItemPanel.MenuManagement menuManagementPanel = new orderItemPanel.MenuManagement();
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                if (topFrame != null && topFrame instanceof posSystem) {
+                if (topFrame instanceof posSystem) {
                     ((posSystem) topFrame).switchToPanel(menuManagementPanel);
                 }
             });
@@ -217,7 +219,7 @@ class orderItemPanel extends JPanel {
     private final Map<String, JPanel> orderItemPanels = new HashMap<>();
     private final Map<String, JLabel> orderItemLabels = new HashMap<>();
     private final JPanel orderSummary;
-    private subTotalPanel subtotalPanel;
+    private final subTotalPanel subtotalPanel;
     private final JPanel orderList;
     private final JPanel productItemPanel;
     private final JTextField searchBar;
@@ -657,9 +659,9 @@ class orderItemPanel extends JPanel {
         private double subtotal = 0.0;
         private double tax = 0.0;
         private double total = 0.0;
-        private JLabel subtotalLabel;
-        private JLabel taxLabel;
-        private JLabel totalLabel;
+        private final JLabel subtotalLabel;
+        private final JLabel taxLabel;
+        private final JLabel totalLabel;
 
         subTotalPanel() {
             JPanel subTotal = new JPanel();
@@ -907,16 +909,14 @@ class orderItemPanel extends JPanel {
         }
 
     }
-}
 
 
 
-class AddItemPanel extends JPanel {
-    private JTextField nameField;
-    private JTextField categoryField;
-    private JTextField priceField;
-    private JTextArea descArea;
-    private JButton addItemBtn;
+static class AddItemPanel extends JPanel {
+    private final JTextField nameField;
+    private final JTextField categoryField;
+    private final JTextField priceField;
+    private final JTextArea descArea;
 
     public AddItemPanel() {
         setBackground(new Color(8, 28, 48));
@@ -946,7 +946,7 @@ class AddItemPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Add Item button
-        addItemBtn = new JButton("+ Add Item");
+        JButton addItemBtn = new JButton("+ Add Item");
         addItemBtn.setFont(new Font("Roboto", Font.BOLD, 18));
         addItemBtn.setBackground(new Color(255, 193, 7));
         addItemBtn.setForeground(Color.BLACK);
@@ -988,7 +988,7 @@ class AddItemPanel extends JPanel {
     }
 
     private void handleAddItem() {
-        // Placeholder for add item action - implement data validation and processing here
+
         String name = nameField.getText().trim();
         String category = categoryField.getText().trim();
         String price = priceField.getText().trim();
@@ -1016,26 +1016,30 @@ class AddItemPanel extends JPanel {
 
 
 
+static class processOrderPanel extends JPanel {
 
-class processOrderPanel extends JPanel {
+
+    private double discountTotal = 0.0; // You can implement discount logic if needed
+    private double total = 0.0;
+    private JTextField cTenderedTField;
+    private JLabel changeLabel2;
+
 
     processOrderPanel(List<Product> orderedProducts) {
         Font sz16 = FontUtils.loadFont(16f);
         Font sz20 = FontUtils.loadFont(20f);
 
 
-
         JPanel processOrder = new JPanel();
-        processOrder.setLayout(new FlowLayout(FlowLayout.LEFT, 10,10));
-        processOrder.setPreferredSize(new Dimension(1620,1100));
-        processOrder.setMaximumSize(new Dimension(1240,980));
+        processOrder.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        processOrder.setPreferredSize(new Dimension(1620, 1100));
+        processOrder.setMaximumSize(new Dimension(1240, 980));
         processOrder.setBackground(Color.DARK_GRAY);
-
 
 
         JPanel orderSummarySide = new JPanel();
         orderSummarySide.setLayout(new BoxLayout(orderSummarySide, BoxLayout.Y_AXIS));
-        orderSummarySide.setPreferredSize(new Dimension(500,800));
+        orderSummarySide.setPreferredSize(new Dimension(500, 800));
         orderSummarySide.setAlignmentX(Component.LEFT_ALIGNMENT);
         orderSummarySide.setOpaque(false);
 
@@ -1043,8 +1047,8 @@ class processOrderPanel extends JPanel {
         JPanel osPanel = new JPanel();
         osPanel.setOpaque(false);
         osPanel.setLayout(new BorderLayout());
-        osPanel.setPreferredSize(new Dimension(500,40));
-        osPanel.setMaximumSize(new Dimension(500,40));
+        osPanel.setPreferredSize(new Dimension(500, 40));
+        osPanel.setMaximumSize(new Dimension(500, 40));
 
         JLabel osLabel = new JLabel("Order Summary");
         osLabel.setForeground(Color.white);
@@ -1056,8 +1060,8 @@ class processOrderPanel extends JPanel {
         JPanel plusBtnPanel = new JPanel();
         plusBtnPanel.setOpaque(false);
         plusBtnPanel.setLayout(new BorderLayout());
-        plusBtnPanel.setPreferredSize(new Dimension(500,40));
-        plusBtnPanel.setMaximumSize(new Dimension(500,40));
+        plusBtnPanel.setPreferredSize(new Dimension(500, 40));
+        plusBtnPanel.setMaximumSize(new Dimension(500, 40));
 
         JButton plusButton = new JButton("+");
         plusButton.setBorderPainted(false);
@@ -1081,11 +1085,40 @@ class processOrderPanel extends JPanel {
         orderSummaryScroll.setOpaque(false);
 
 
-
         JScrollBar verticalScrollBar2 = orderSummaryScroll.getVerticalScrollBar();
         verticalScrollBar2.setUnitIncrement(30);
         verticalScrollBar2.setBlockIncrement(100);
         orderSummarySide.add(orderSummaryScroll);
+
+        Map<String, Integer> productQuantityMap = new LinkedHashMap<>();
+        for (Product product : orderedProducts) {
+            String key = product.getName() + " - " + product.getSize();
+            productQuantityMap.put(key, productQuantityMap.getOrDefault(key, 0) + 1);
+        }
+
+        // getting the products that ordered
+
+        double subtotal = 0.0;
+        for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
+            String productNameSize = entry.getKey();
+            int quantity = entry.getValue();
+
+            double price = 0.0;
+            for (Product p : orderedProducts) {
+                String key = p.getName() + " - " + p.getSize();
+                if (key.equals(productNameSize)) {
+                    price = p.getPrice();
+                    break;
+                }
+            }
+            subtotal += price * quantity;
+            JLabel productLabel = new JLabel(quantity + "x | " + productNameSize + ", ₱" + String.format("%.2f", price * quantity));
+            productLabel.setForeground(Color.WHITE);
+            orderProcessSummary.add(productLabel);
+        }
+
+        orderSummarySide.add(orderSummaryScroll);
+
 
 
         JPanel subTotalPanel = new JPanel();
@@ -1096,119 +1129,153 @@ class processOrderPanel extends JPanel {
         JPanel stPanel = new JPanel();
         stPanel.setOpaque(false);
         stPanel.setLayout(new BorderLayout());
-        stPanel.setPreferredSize(new Dimension(500,30));
-        stPanel.setMaximumSize(new Dimension(500,30));
-        JLabel subtotal = new JLabel("Sub total: ");
-        subtotal.setFont(sz16);
-        subtotal.setForeground(Color.WHITE);
-        stPanel.add(subtotal,BorderLayout.WEST);
+        stPanel.setPreferredSize(new Dimension(500, 30));
+        stPanel.setMaximumSize(new Dimension(500, 30));
+
+        JLabel subtotalLabel = new JLabel("Sub total: ₱" + String.format("%.2f", subtotal));
+        subtotalLabel.setFont(sz16);
+        subtotalLabel.setForeground(Color.WHITE);
+        stPanel.add(subtotalLabel, BorderLayout.WEST);
         subTotalPanel.add(stPanel);
 
         JPanel dPanel = new JPanel();
         dPanel.setOpaque(false);
         dPanel.setLayout(new BorderLayout());
-        dPanel.setPreferredSize(new Dimension(500,30));
-        dPanel.setMaximumSize(new Dimension(500,30));
+        dPanel.setPreferredSize(new Dimension(500, 30));
+        dPanel.setMaximumSize(new Dimension(500, 30));
         JLabel discount = new JLabel("Discount: ");
         discount.setFont(sz16);
         discount.setForeground(Color.WHITE);
         dPanel.add(discount, BorderLayout.WEST);
         subTotalPanel.add(dPanel);
 
-
+        total = subtotal - discountTotal;
+        if(total < 0) total = 0;
 
         JPanel tPanel = new JPanel();
         tPanel.setOpaque(false);
         tPanel.setLayout(new BorderLayout());
-        tPanel.setPreferredSize(new Dimension(500,30));
-        tPanel.setMaximumSize(new Dimension(500,30));
-        JLabel total = new JLabel("Total: ");
-        total.setFont(sz16);
-        total.setForeground(Color.WHITE);
-        tPanel.add(total, BorderLayout.WEST);
+        tPanel.setPreferredSize(new Dimension(500, 30));
+        tPanel.setMaximumSize(new Dimension(500, 30));
+        JLabel totalLabel = new JLabel("Total: ₱" + String.format("%.2f", total));
+        totalLabel.setFont(sz16);
+        totalLabel.setForeground(Color.WHITE);
+        tPanel.add(totalLabel, BorderLayout.WEST);
         subTotalPanel.add(tPanel);
 
-        JPanel cashTenderedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10,0));
+        JPanel cashTenderedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         cashTenderedPanel.setOpaque(false);
-        cashTenderedPanel.setMaximumSize(new Dimension(500,60));
+        cashTenderedPanel.setMaximumSize(new Dimension(500, 60));
 
         JLabel cashTendered = new JLabel("Cash Tendered: ");
         cashTendered.setForeground(Color.white);
         cashTendered.setFont(sz20);
         cashTenderedPanel.add(cashTendered);
 
-        JTextField cTenderedTField = new JTextField("₱ ");
-        cTenderedTField.setPreferredSize(new Dimension(150,50));
+        cTenderedTField = new JTextField();
+        cTenderedTField.setPreferredSize(new Dimension(150, 50));
         cTenderedTField.setOpaque(false);
-        cTenderedTField.setBorder(BorderFactory.createLineBorder(Color.white,1,true));
+        cTenderedTField.setBorder(BorderFactory.createLineBorder(Color.white, 1, true));
         cTenderedTField.setFont(sz20);
         cTenderedTField.setForeground(Color.WHITE);
+        cTenderedTField.setText("");
         cashTenderedPanel.add(cTenderedTField);
 
         subTotalPanel.add(cashTenderedPanel);
 
-        JPanel changePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10,0));
-
-        changePanel.setPreferredSize(new Dimension(500,60));
+        // Change panel
+        JPanel changePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        changePanel.setPreferredSize(new Dimension(500, 60));
         changePanel.setMaximumSize(new Dimension(500,60));
         changePanel.setOpaque(false);
+
         JLabel changeLabel1 = new JLabel("Change: ");
         changeLabel1.setForeground(Color.white);
         changeLabel1.setFont(sz20);
         changePanel.add(changeLabel1);
 
-        JLabel changeLabel2 = new JLabel("₱ ");
+        changeLabel2 = new JLabel("₱ 0.00");
         changeLabel2.setOpaque(false);
         changeLabel2.setFont(sz20);
         changeLabel2.setForeground(Color.WHITE);
         changePanel.add(changeLabel2);
 
-
         subTotalPanel.add(changePanel);
-
 
         orderSummarySide.add(subTotalPanel);
 
-
-        //PROCESS BUTTONS FOP ORDER PROCESS SUMMARY:
+        // Process Buttons for order confirmation and cancellation
         JPanel processButtonPanel = new JPanel();
         processButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 0));
         processButtonPanel.setPreferredSize(new Dimension(600, getHeight()));
         processButtonPanel.setOpaque(false);
 
-
         JButton cancelBtn = new JButton("Cancel");
         cancelBtn.setForeground(Color.WHITE);
         cancelBtn.setBackground(Color.decode("#BD1212"));
-        cancelBtn.setPreferredSize(new Dimension(140,50));
+        cancelBtn.setPreferredSize(new Dimension(140, 50));
         cancelBtn.setBorderPainted(false);
         cancelBtn.setFocusPainted(false);
         cancelBtn.setFont(sz16);
+        cancelBtn.addActionListener(e -> {
 
-        processButtonPanel.add(cancelBtn);
+            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (topFrame instanceof posSystem posFrame) {
+                posFrame.switchToPanel(posFrame.getOrderItemPanel());
+            }
+        });
 
         JButton processBtn = new JButton("Confirm Payment");
         processBtn.setForeground(Color.WHITE);
-        processBtn.setPreferredSize(new Dimension(160,50));
+        processBtn.setPreferredSize(new Dimension(160, 50));
         processBtn.setBackground(Color.decode("#F9A61A"));
         processBtn.setBorderPainted(false);
         processBtn.setFocusPainted(false);
         processBtn.setFont(sz16);
+        processBtn.addActionListener(e -> {
+            String cashInput = cTenderedTField.getText().trim().replace("₱", "").trim();
+            try {
+                double cashTenderedAmount = Double.parseDouble(cashInput);
+                if (cashTenderedAmount < total) {
+                    JOptionPane.showMessageDialog(this, "Insufficient cash tendered. Please enter an amount equal or greater than the total.", "Payment Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                double change = cashTenderedAmount - total;
+                changeLabel2.setText("₱ " + String.format("%.2f", change));
+                JOptionPane.showMessageDialog(this, "Payment successful!\nChange: ₱ " + String.format("%.2f", change), "Payment Confirmed", JOptionPane.INFORMATION_MESSAGE);
+
+                // After payment, clear order and switch back to orderItemPanel
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                if (topFrame instanceof posSystem) {
+                    posSystem posFrame = (posSystem) topFrame;
+
+                    posFrame.getOrderItemPanel().clearOrder();
+                    posFrame.switchToPanel(posFrame.getOrderItemPanel());
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter a valid numeric amount for cash tendered.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+
+        processButtonPanel.add(cancelBtn);
         processButtonPanel.add(processBtn);
 
         orderSummarySide.add(processButtonPanel);
 
-
         processOrder.add(orderSummarySide);
-
-
-
         add(processOrder);
+    }
+}
 
-
+    private void clearOrder() {
+            orderList.removeAll();
+            orderList.revalidate();
+            orderList.repaint();
+            if (subtotalPanel != null)
+                subtotalPanel.resetSubtotal();
 
     }
-
 
 }
 
