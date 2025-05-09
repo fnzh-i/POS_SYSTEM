@@ -14,6 +14,7 @@ public class posSystem extends javax.swing.JFrame {
     private JPanel currentCenterPanel; // Track the current center panel
 
     public posSystem(User user) {
+
         this.currentUser  = user;
 
         setSize(1920, 1080);
@@ -37,9 +38,6 @@ public class posSystem extends javax.swing.JFrame {
         setVisible(true);
     }
 
-    public User getCurrentUser () {
-        return currentUser ;
-    }
 
     // Method to switch panel
     public void switchToPanel(JPanel newPanel) {
@@ -49,13 +47,18 @@ public class posSystem extends javax.swing.JFrame {
         revalidate(); // Refresh the layout
         repaint(); // Repaint the frame
     }
-
     public static void main(String[] args) {
-        new logInSection();
+
+        User user = new User("username", "password");
+        new posSystem(user);
+
     }
 
     public orderItemPanel getOrderItemPanel() {
         return orderItemSection;
+    }
+    public User getCurrentUser () {
+        return currentUser;
     }
 }
 
@@ -911,7 +914,6 @@ class orderItemPanel extends JPanel {
     }
 
 
-
 static class AddItemPanel extends JPanel {
     private final JTextField nameField;
     private final JTextField categoryField;
@@ -1030,6 +1032,7 @@ static class processOrderPanel extends JPanel {
         Font sz20 = FontUtils.loadFont(20f);
 
 
+
         JPanel processOrder = new JPanel();
         processOrder.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         processOrder.setPreferredSize(new Dimension(1620, 1100));
@@ -1114,6 +1117,7 @@ static class processOrderPanel extends JPanel {
             subtotal += price * quantity;
             JLabel productLabel = new JLabel(quantity + "x | " + productNameSize + ", ₱" + String.format("%.2f", price * quantity));
             productLabel.setForeground(Color.WHITE);
+            productLabel.setFont(sz20);
             orderProcessSummary.add(productLabel);
         }
 
@@ -1183,7 +1187,6 @@ static class processOrderPanel extends JPanel {
 
         subTotalPanel.add(cashTenderedPanel);
 
-        // Change panel
         JPanel changePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         changePanel.setPreferredSize(new Dimension(500, 60));
         changePanel.setMaximumSize(new Dimension(500,60));
@@ -1251,6 +1254,8 @@ static class processOrderPanel extends JPanel {
 
                     posFrame.getOrderItemPanel().clearOrder();
                     posFrame.switchToPanel(posFrame.getOrderItemPanel());
+                    revalidate();
+                    repaint();
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "Please enter a valid numeric amount for cash tendered.", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1261,19 +1266,32 @@ static class processOrderPanel extends JPanel {
         processButtonPanel.add(cancelBtn);
         processButtonPanel.add(processBtn);
 
+        JPanel receiptSide = new JPanel();
+        receiptSide.setBackground(Color.WHITE);
+        receiptSide.setPreferredSize(new Dimension(400,700));
+        receiptSide.setMaximumSize(new Dimension(400,700));
+
+
+
+
         orderSummarySide.add(processButtonPanel);
 
         processOrder.add(orderSummarySide);
+        processOrder.add(receiptSide);
         add(processOrder);
+
     }
 }
 
     private void clearOrder() {
+            addedOrderItems.clear();
+            orderItemPanels.clear();
+            orderItemLabels.clear();
+            if (subtotalPanel != null)
+                subtotalPanel.resetSubtotal();
             orderList.removeAll();
             orderList.revalidate();
             orderList.repaint();
-            if (subtotalPanel != null)
-                subtotalPanel.resetSubtotal();
 
     }
 
