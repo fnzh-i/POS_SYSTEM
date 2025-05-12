@@ -78,6 +78,7 @@ public class logInPage extends logInSection{
                 String userType = userTypeObj.toString();
                 orderSummary.getInstance().setUsrname(userName);
                 return new User(userName, userType); // Return User object with role
+
             }
         }
 

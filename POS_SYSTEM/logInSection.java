@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class logInSection extends JFrame {
-    // private static final Logger log = LoggerFactory.getLogger(logInSection.class); not yet needed atm
+
 
     public logInSection(){
         setSize(1280,720);
