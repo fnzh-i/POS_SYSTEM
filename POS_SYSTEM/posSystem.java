@@ -300,7 +300,7 @@ class orderItemPanel extends JPanel {
 
         // Order summary panel
         orderSummary = new JPanel();
-        orderSummary.setPreferredSize(new Dimension(300, 720)); // Reduced from 400
+        orderSummary.setPreferredSize(new Dimension(350, 720)); // Wider panel
         orderSummary.setBackground(Color.decode("#021526"));
         orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
 
@@ -320,9 +320,10 @@ class orderItemPanel extends JPanel {
         orderList = new JPanel();
         orderList.setLayout(new BoxLayout(orderList, BoxLayout.Y_AXIS));
         orderList.setBackground(Color.decode("#424040"));
+        orderList.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
         JScrollPane orderListScroll = new JScrollPane(orderList);
         orderListScroll.setBorder(null);
-        orderListScroll.setPreferredSize(new Dimension(280, 320));   // Reduced width
+        orderListScroll.setPreferredSize(new Dimension(300, 300));   // Reduced width
         orderListScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         orderListScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -507,7 +508,7 @@ class orderItemPanel extends JPanel {
             JOptionPane.showMessageDialog(
                     null,
                     "Only admin/manager can fully cancel orders.\n" +
-                            "Please remove items individually using the Delete buttons.",
+                            "Please remove items individually using the +/- buttons.",
                     "Permission Denied",
                     JOptionPane.WARNING_MESSAGE
             );
@@ -516,38 +517,38 @@ class orderItemPanel extends JPanel {
 
     public JPanel createProductItem(String text, String productSize, String productImg, Font font, double price) {
         JPanel productItemCont = new JPanel();
-        productItemCont.setPreferredSize(new Dimension(150, 200)); // Reduced height
+        productItemCont.setPreferredSize(new Dimension(150, 200));
         productItemCont.setOpaque(false);
-        productItemCont.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // Reduced padding
+        productItemCont.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         JPanel productItem = new JPanel();
         productItem.setBackground(Color.decode("#111010"));
-        productItem.setPreferredSize(new Dimension(140, 190)); // Reduced dimensions
+        productItem.setPreferredSize(new Dimension(140, 190));
         productItem.setMaximumSize(new Dimension(140, 190));
-        productItem.setLayout(new BorderLayout(0, 0)); // Reduced gaps between components
+        productItem.setLayout(new BorderLayout(0, 0));
         productItem.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
 
         ImageIcon originalIcon = new ImageIcon(productImg);
-        Image scaledImage = originalIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH); // Smaller image
+        Image scaledImage = originalIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
         ImageIcon productPic = new ImageIcon(scaledImage);
 
         JLabel imgFrame = new JLabel(productPic, SwingConstants.CENTER);
         imgFrame.setAlignmentX(Component.CENTER_ALIGNMENT);
-        imgFrame.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0)); // Reduced padding
+        imgFrame.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         productItem.add(imgFrame, BorderLayout.NORTH);
 
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setBackground(Color.decode("#111010"));
-        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5)); // Reduced padding
+        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
 
         JLabel productName = new JLabel(text);
-        productName.setFont(sz15); // Using slightly smaller font
+        productName.setFont(sz15);
         productName.setForeground(Color.WHITE);
         productName.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel itemSize = new JLabel(productSize);
-        itemSize.setFont(sz13); // Using smaller font for size
+        itemSize.setFont(sz13);
         itemSize.setForeground(Color.gray);
         itemSize.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -558,7 +559,7 @@ class orderItemPanel extends JPanel {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
         bottomPanel.setBackground(Color.decode("#111010"));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5)); // Reduced padding
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         JLabel productPrice = new JLabel();
         productPrice.setText("₱" + String.format("%.2f", price));
@@ -571,8 +572,8 @@ class orderItemPanel extends JPanel {
         addProduct.setBackground(Color.decode("#686AF5"));
         addProduct.setBorderPainted(false);
         addProduct.setFocusPainted(false);
-        addProduct.setPreferredSize(new Dimension(40, 40)); // Smaller button
-        addProduct.setFont(sz11); // Smaller font for button
+        addProduct.setPreferredSize(new Dimension(40, 40));
+        addProduct.setFont(sz11);
         addProduct.setHorizontalAlignment(SwingConstants.CENTER);
         addProduct.setVerticalAlignment(SwingConstants.CENTER);
 
@@ -586,65 +587,100 @@ class orderItemPanel extends JPanel {
                 if (existingPanel != null) {
                     JLabel label = orderItemLabels.get(productKey);
                     if (label != null) {
-                        label.setText(currentQty + "x | " + text + ", " + productSize + ", ₱ " + String.format("%.2f", price));
+                        label.setText(String.format("%dx | %s, %s ₱%.2f",
+                                currentQty, text, productSize, price));
                     }
                 }
             } else {
                 addedOrderItems.put(productKey, 1);
-                JPanel orderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+                JPanel orderPanel = new JPanel(new BorderLayout());
                 orderPanel.setOpaque(false);
+                orderPanel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5)); // Reduced right padding
 
-                JLabel orderLabel = new JLabel("1x | " + text + ", " + productSize + ", ₱ " + String.format("%.2f", price));
-                orderLabel.setFont(sz12); // Reduced font
+                // Main panel with BorderLayout
+                JPanel contentPanel = new JPanel(new BorderLayout());
+                contentPanel.setOpaque(false);
+
+                // Item panel with fixed width
+                JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+                itemPanel.setOpaque(false);
+                itemPanel.setPreferredSize(new Dimension(220, 25)); // Reduced width
+
+                JLabel orderLabel = new JLabel(String.format("%dx | %s, %s ₱%.2f",
+                        1, text, productSize, price));
+                orderLabel.setFont(sz13);
                 orderLabel.setForeground(Color.WHITE);
+                itemPanel.add(orderLabel);
+                contentPanel.add(itemPanel, BorderLayout.CENTER);
 
-                JButton incr = new JButton("Add");
-                incr.setFont(sz12); // Reduced font
-                incr.setForeground(Color.decode("#F9A61A"));
-                incr.setBackground(Color.gray);
+                // Button panel moved left by reducing its width and adjusting insets
+                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 3, 0)); // Reduced spacing
+                buttonPanel.setOpaque(false);
+                buttonPanel.setPreferredSize(new Dimension(100, 25)); // Reduced width
+
+                // Add button
+                JButton incr = new JButton("+");
+                incr.setFont(sz13.deriveFont(Font.BOLD));
+                incr.setForeground(Color.WHITE);
+                incr.setBackground(Color.decode("#F9A61A"));
                 incr.setBorderPainted(false);
                 incr.setFocusPainted(false);
+                incr.setPreferredSize(new Dimension(45, 20)); // Slightly smaller
                 incr.addActionListener(ae -> {
                     int qty = addedOrderItems.get(productKey) + 1;
                     addedOrderItems.put(productKey, qty);
-                    orderLabel.setText(qty + "x | " + text + ", " + productSize + ", ₱ " + String.format("%.2f", price));
+                    orderLabel.setText(String.format("%dx | %s, %s ₱%.2f",
+                            qty, text, productSize, price));
                     if (subtotalPanel != null) subtotalPanel.updateSubtotal(price);
                 });
 
-                JButton decr = new JButton("Delete");
-                decr.setFont(sz12); // Reduced font
-                decr.setForeground(Color.decode("#BD1212"));
-                decr.setBackground(Color.gray);
+                // Delete button
+                String buttonText = (currentUser.isAdmin() || currentUser.isManager()) ? "X" : "-";
+                JButton decr = new JButton(buttonText);
+                decr.setFont(sz13.deriveFont(Font.BOLD));
+                decr.setForeground(Color.WHITE);
+                decr.setBackground(Color.decode("#BD1212"));
                 decr.setBorderPainted(false);
                 decr.setFocusPainted(false);
+                decr.setPreferredSize(new Dimension(45, 20)); // Slightly smaller
                 decr.addActionListener(ae -> {
-                    int qty = addedOrderItems.get(productKey) - 1;
-                    if (qty > 0) {
-                        addedOrderItems.put(productKey, qty);
-                        orderLabel.setText(qty + "x | " + text + ", " + productSize + ", ₱ " + String.format("%.2f", price));
+                    int currentQty = addedOrderItems.get(productKey);
+                    if (currentQty > 1) {
+                        addedOrderItems.put(productKey, currentQty - 1);
+                        orderLabel.setText(String.format("%dx | %s, %s ₱%.2f",
+                                currentQty - 1, text, productSize, price));
                         if (subtotalPanel != null) subtotalPanel.updateSubtotal(-price);
                     } else {
-                        addedOrderItems.remove(productKey);
-                        orderList.remove(orderPanel);
-                        orderItemLabels.remove(productKey);
-                        orderItemPanels.remove(productKey);
-                        if (subtotalPanel != null) subtotalPanel.updateSubtotal(-price);
-                        orderList.revalidate();
-                        orderList.repaint();
+                        if (currentUser.isAdmin() || currentUser.isManager()) {
+                            addedOrderItems.remove(productKey);
+                            orderList.remove(orderPanel);
+                            orderItemLabels.remove(productKey);
+                            orderItemPanels.remove(productKey);
+                            if (subtotalPanel != null) subtotalPanel.updateSubtotal(-price);
+                            orderList.revalidate();
+                            orderList.repaint();
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    orderItemPanel.this,
+                                    "You need manager privileges to fully remove items",
+                                    "Permission Required",
+                                    JOptionPane.WARNING_MESSAGE
+                            );
+                        }
                     }
                 });
 
-                orderPanel.add(orderLabel);
-                orderPanel.add(incr);
-                orderPanel.add(decr);
+                buttonPanel.add(incr);
+                buttonPanel.add(decr);
+                contentPanel.add(buttonPanel, BorderLayout.EAST);
 
+                orderPanel.add(contentPanel, BorderLayout.CENTER);
                 orderList.add(orderPanel);
                 orderItemPanels.put(productKey, orderPanel);
                 orderItemLabels.put(productKey, orderLabel);
             }
 
             subtotalPanel.updateSubtotal(price);
-
             orderList.revalidate();
             orderList.repaint();
         });
@@ -667,8 +703,8 @@ class orderItemPanel extends JPanel {
         subTotalPanel() {
             JPanel subTotal = new JPanel();
             subTotal.setBackground(Color.decode("#424040"));
-            subTotal.setPreferredSize(new Dimension(280, 180)); // Reduced dimensions
-            subTotal.setMaximumSize(new Dimension(280, 180));
+            subTotal.setPreferredSize(new Dimension(330, 180)); // Increased from 280
+            subTotal.setMaximumSize(new Dimension(330, 180));
             subTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
             subTotal.setLayout(new BoxLayout(subTotal, BoxLayout.Y_AXIS));
             subTotal.setBorder(BorderFactory.createEmptyBorder(15, 10, 0, 10)); // Reduced padding
