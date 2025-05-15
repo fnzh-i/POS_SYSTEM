@@ -9,7 +9,8 @@ import java.util.Date;
 
 public class MenuManagement extends JPanel {
     private final User currentUser;
-
+    private int Items;
+    private int Price;
     Font sz14 = FontUtils.loadFont(14f);
     Font sz16 = FontUtils.loadFont(16f);
     Font sz18 = FontUtils.loadFont(18f);

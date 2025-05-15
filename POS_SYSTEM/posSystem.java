@@ -1,5 +1,7 @@
 package POS_SYSTEM;
 
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -48,7 +50,7 @@ public class posSystem extends javax.swing.JFrame {
     }
 
     public static void main(String[] args) {
-        User user = new User("username", "password");
+        User user = new User("admin", "admin");
         new posSystem(user);
     }
 
@@ -236,7 +238,6 @@ class orderItemPanel extends JPanel {
     Font sz15 = FontUtils.loadFont(15f);
     Font sz16 = FontUtils.loadFont(16f);
     Font sz17 = FontUtils.loadFont(17f);
-
 
     private final List<Product> productList = new ArrayList<>();
 
@@ -475,14 +476,14 @@ class orderItemPanel extends JPanel {
     }
 
     private void initializeProducts() {
-        productList.add(new Product("Jack n' Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", 15.00, "Snacks"));
-        productList.add(new Product("Jack n' Jill Nova", "40g", "Images/Sample Product Images/Jack n Jill Nova .png", 15.00, "Snacks"));
-        productList.add(new Product("Burger", "1pc", "Images/Sample Product Images/Burger .png", 20.00, "Snacks"));
-        productList.add(new Product("Hotdog", "1pc", "Images/Sample Product Images/Hotdog.png", 20.00, "Snacks"));
-        productList.add(new Product("Coke Mismo", "295ml", "Images/Sample Product Images/Coke Mismo.png", 15.00, "Drinks"));
-        productList.add(new Product("Royal Mismo", "295ml", "Images/Sample Product Images/Royal Mismo.png", 15.00, "Drinks"));
-        productList.add(new Product("Caldereta", "1 serving", "Images/Sample Product Images/Caldereta.png", 50.00, "Meals"));
-        productList.add(new Product("Rice", "1 cup", "Images/Sample Product Images/Rice.png", 10.00, "Meals"));
+        productList.add(new Product("Jack n' Jill Piattos", "40g", "Images/Sample Product Images/Piattos-Cheese-40g.png", 15.00, "Snacks", 123));
+        productList.add(new Product("Jack n' Jill Nova", "40g", "Images/Sample Product Images/Jack n Jill Nova .png", 15.00, "Snacks", 124));
+        productList.add(new Product("Burger", "1pc", "Images/Sample Product Images/Burger .png", 20.00, "Snacks", 125));
+        productList.add(new Product("Hotdog", "1pc", "Images/Sample Product Images/Hotdog.png", 20.00, "Snacks", 126));
+        productList.add(new Product("Coke Mismo", "295ml", "Images/Sample Product Images/Coke Mismo.png", 15.00, "Drinks", 127));
+        productList.add(new Product("Royal Mismo", "295ml", "Images/Sample Product Images/Royal Mismo.png", 15.00, "Drinks", 128));
+        productList.add(new Product("Caldereta", "1 serving", "Images/Sample Product Images/Caldereta.png", 50.00, "Meals", 128));
+        productList.add(new Product("Rice", "1 cup", "Images/Sample Product Images/Rice.png", 10.00, "Meals", 130));
     }
 
     private void cancelButton() {
@@ -635,7 +636,7 @@ class orderItemPanel extends JPanel {
                 });
 
                 // Delete button
-                String buttonText = (currentUser.isAdmin() || currentUser.isManager()) ? "X" : "-";
+                String buttonText = (currentUser.isAdmin() || currentUser.isManager()) ? "x" : "-";
                 JButton decr = new JButton(buttonText);
                 decr.setFont(sz13.deriveFont(Font.BOLD));
                 decr.setForeground(Color.WHITE);
@@ -666,6 +667,24 @@ class orderItemPanel extends JPanel {
                                     "Permission Required",
                                     JOptionPane.WARNING_MESSAGE
                             );
+//                            JOptionPane.showMessageDialog(
+//                                    orderItemPanel.this,
+//                                    "Bawal nga",
+//                                    "Permission Required",
+//                                    JOptionPane.WARNING_MESSAGE
+//                            );
+//                            JOptionPane.showMessageDialog(
+//                                    orderItemPanel.this,
+//                                    "Ang kulit nga",
+//                                    "Permission Required",
+//                                    JOptionPane.WARNING_MESSAGE
+//                            );
+//                            JOptionPane.showMessageDialog(
+//                                    orderItemPanel.this,
+//                                    "Sinubukan pa nga",
+//                                    "Permission Required",
+//                                    JOptionPane.WARNING_MESSAGE
+//                            );
                         }
                     }
                 });
@@ -1012,7 +1031,7 @@ class orderItemPanel extends JPanel {
         }
     }
 
-    private void clearOrder() {
+    void clearOrder() {
         addedOrderItems.clear();
         orderItemPanels.clear();
         orderItemLabels.clear();
