@@ -1,14 +1,15 @@
-package POS_SYSTEM;
+import java.awt.*;
 
-public class Product {
-    private String name;
-    private String size;
-    private String image;
-    private double price;
-    private String category;
-    private final int itemId;
+public class Product extends Point {
+    private final String name;
+    private final String size;
+    private final String image;
+    private final double price;
+    private final String category;
+    private int  itemId;
+    private int Quantity;
 
-    public Product(String name, String size, String image, double price, String category, int itemId) {
+    public Product(String name, String size, String image, double price, String category, int  itemId) {
         this.name = name;
         this.size = size;
         this.image = image;
@@ -17,18 +18,33 @@ public class Product {
         this.itemId = itemId;
     }
 
-    // Getters
-    public String getName() { return name; }
-    public String getSize() { return size; }
-    public String getImage() { return image; }
-    public double getPrice() { return price; }
-    public String getCategory() { return category; }
-    public int getItemId() { return itemId; }
+    public String getName() {
+        return name;
+    }
 
-    // Setters
-    public void setName(String name) { this.name = name; }
-    public void setSize(String size) { this.size = size; }
-    public void setImage(String image) { this.image = image; }
-    public void setPrice(double price) { this.price = price; }
-    public void setCategory(String category) { this.category = category; }
+    public String getSize() {
+        return size;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public int getPrice() {
+        return (int) price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public int getId() {
+
+        return itemId;
+    }
+
+    public int getQuantity() {
+        return Quantity;
+    }
 }
+
