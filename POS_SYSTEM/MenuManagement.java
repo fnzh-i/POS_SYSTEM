@@ -3,10 +3,14 @@ package POS_SYSTEM;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 public class MenuManagement extends JPanel {
     private final User currentUser;
@@ -172,39 +176,94 @@ public class MenuManagement extends JPanel {
         card.setBackground(new Color(48, 41, 57));
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        card.setPreferredSize(new Dimension(200, 180));
+        card.setPreferredSize(new Dimension(200, 250)); // Increased height to accommodate image
+
+        // Image panel
+        JPanel imagePanel = new JPanel(new BorderLayout());
+        imagePanel.setPreferredSize(new Dimension(170, 120));
+        imagePanel.setBackground(new Color(60, 60, 60));
+
+        try {
+            // Load image if path exists
+            if (product.getImage() != null && !product.getImage().isEmpty()) {
+                File imageFile = new File(product.getImage());
+                if (imageFile.exists()) {
+                    BufferedImage originalImage = ImageIO.read(imageFile);
+
+                    // Scale image to fit
+                    Image scaledImage = originalImage.getScaledInstance(170, 120, Image.SCALE_SMOOTH);
+                    ImageIcon imageIcon = new ImageIcon(scaledImage);
+                    JLabel imageLabel = new JLabel(imageIcon);
+                    imagePanel.add(imageLabel, BorderLayout.CENTER);
+                } else {
+                    // Show placeholder if image not found
+                    JLabel placeholder = new JLabel("No Image", SwingConstants.CENTER);
+                    placeholder.setForeground(Color.WHITE);
+                    imagePanel.add(placeholder, BorderLayout.CENTER);
+                }
+            } else {
+                // Show placeholder if no image path
+                JLabel placeholder = new JLabel("No Image", SwingConstants.CENTER);
+                placeholder.setForeground(Color.WHITE);
+                imagePanel.add(placeholder, BorderLayout.CENTER);
+            }
+        } catch (IOException ex) {
+            // Show error if image loading fails
+            JLabel errorLabel = new JLabel("Image Error", SwingConstants.CENTER);
+            errorLabel.setForeground(Color.RED);
+            imagePanel.add(errorLabel, BorderLayout.CENTER);
+        }
+
+        // Product info panel
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setOpaque(false);
+        infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         JLabel nameLabel = new JLabel(product.getName());
         nameLabel.setForeground(Color.WHITE);
         nameLabel.setFont(new Font("Roboto", Font.BOLD, 14));
+        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel categoryLabel = new JLabel(product.getCategory());
+        categoryLabel.setForeground(new Color(180, 180, 180));
+        categoryLabel.setFont(new Font("Roboto", Font.PLAIN, 12));
+        categoryLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel priceLabel = new JLabel("₱ " + String.format("%.2f", product.getPrice()));
         priceLabel.setForeground(new Color(180, 200, 220));
-        priceLabel.setFont(new Font("Roboto", Font.PLAIN, 14));
+        priceLabel.setFont(new Font("Roboto", Font.BOLD, 16));
+        priceLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JPanel infoPanel = new JPanel(new BorderLayout());
-        infoPanel.setOpaque(false);
-        infoPanel.add(nameLabel, BorderLayout.NORTH);
-        infoPanel.add(priceLabel, BorderLayout.SOUTH);
+        infoPanel.add(nameLabel);
+        infoPanel.add(Box.createVerticalStrut(5));
+        infoPanel.add(categoryLabel);
+        infoPanel.add(Box.createVerticalStrut(5));
+        infoPanel.add(priceLabel);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        // Button panel
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnPanel.setOpaque(false);
 
         JButton editBtn = new JButton("Edit");
         editBtn.setBackground(new Color(255, 193, 7));
         editBtn.setForeground(Color.BLACK);
         editBtn.setFont(sz14);
+        editBtn.setPreferredSize(new Dimension(70, 25));
         editBtn.addActionListener(e -> editProduct(product));
 
         JButton delBtn = new JButton("Delete");
         delBtn.setBackground(new Color(220, 53, 69));
         delBtn.setForeground(Color.WHITE);
         delBtn.setFont(sz14);
+        delBtn.setPreferredSize(new Dimension(70, 25));
         delBtn.addActionListener(e -> deleteProduct(product));
 
         btnPanel.add(editBtn);
         btnPanel.add(delBtn);
 
+        // Add all components to card
+        card.add(imagePanel, BorderLayout.NORTH);
         card.add(infoPanel, BorderLayout.CENTER);
         card.add(btnPanel, BorderLayout.SOUTH);
 
@@ -214,6 +273,13 @@ public class MenuManagement extends JPanel {
     private void editProduct(Product product) {
         removeAll();
         AddItem editPanel = new AddItem(currentUser, product);
+        editPanel.addPropertyChangeListener("productUpdated", evt -> {
+            // When product is updated, refresh the order panel
+            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (topFrame instanceof posSystem) {
+                ((posSystem) topFrame).refreshOrderItemPanel();
+            }
+        });
         add(editPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
@@ -230,6 +296,13 @@ public class MenuManagement extends JPanel {
             try {
                 ProductDBManager.deleteProduct(product.getItemId());
                 JOptionPane.showMessageDialog(this, "Product deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                // Refresh the order panel after deletion
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                if (topFrame instanceof posSystem) {
+                    ((posSystem) topFrame).refreshOrderItemPanel();
+                }
+
                 refreshProductGrid();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Error deleting product: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

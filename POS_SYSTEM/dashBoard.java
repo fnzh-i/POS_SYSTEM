@@ -1,10 +1,12 @@
-
+package POS_SYSTEM;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
+import java.util.Collections;
+import java.util.Map;
+
+import fonts.fontUtils;
 
 public class dashBoard extends JPanel {
 
@@ -16,7 +18,6 @@ public class dashBoard extends JPanel {
         setLayout(new BorderLayout(20, 20));
         setBackground(Color.decode("#00132d"));
 
-
         // UPPER PART PANEL FOR THE SALES DETAILS:
         JPanel upperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 0));
         upperPanel.setBackground(Color.decode("#00132d"));
@@ -24,14 +25,10 @@ public class dashBoard extends JPanel {
         upperPanel.setMaximumSize(new Dimension(1200, 200));
         upperPanel.setBorder(BorderFactory.createEmptyBorder(30, 10, 40, 10));
 
-
         upperPanel.add(createSaleSummaryPanel("Number of Customer", "", 0)); // Placeholder (you can calculate customers later)
-        upperPanel.add(createSaleSummaryPanel("Today's Income", "₱ ", (int) DatabaseManager.getTodaysIncome()));
-        upperPanel.add(createSaleSummaryPanel("Total Income", "₱ ", (int) DatabaseManager.getTotalIncome()));
-        upperPanel.add(createSaleSummaryPanel("Number of Sold Products", "", DatabaseManager.getTotalSoldProducts()));
-
-
-
+        upperPanel.add(createSaleSummaryPanel("Today's Income", "₱ ", (int) orderHistoryDBManager.getTodaysIncome()));
+        upperPanel.add(createSaleSummaryPanel("Total Income", "₱ ", (int) orderHistoryDBManager.getTotalIncome()));
+        upperPanel.add(createSaleSummaryPanel("Number of Sold Products", "", orderHistoryDBManager.getTotalSoldProducts()));
 
         // LOWER PART PANEL:
 
@@ -45,6 +42,16 @@ public class dashBoard extends JPanel {
         monthlyGraphPanel.setPreferredSize(new Dimension(800, 500));
         monthlyGraphPanel.setMaximumSize(new Dimension(800, 500));
         monthlyGraphPanel.setBackground(Color.white);
+        monthlyGraphPanel.setLayout(new BorderLayout());
+
+        // Get weekly income data
+        Map<String, Double> weeklyIncome = orderHistoryDBManager.getWeeklyIncome();
+
+        // Create and add graph panel
+        RoundedPanel.IncomeGraphPanel graphPanel = new RoundedPanel.IncomeGraphPanel(weeklyIncome);
+        graphPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        monthlyGraphPanel.add(graphPanel, BorderLayout.CENTER);
+
         lowerPanel.add(monthlyGraphPanel);
 
 
@@ -59,24 +66,9 @@ public class dashBoard extends JPanel {
         add(lowerPanel, BorderLayout.CENTER);
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Dashboard");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout());
-        frame.setResizable(false);
-        frame.getContentPane().setBackground(Color.decode("#00132d"));
-
-        dashBoard dashboardPanel = new dashBoard();
-        frame.getContentPane().add(dashboardPanel, BorderLayout.CENTER);
-
-        frame.setSize(1240, 800); // Adjust frame size
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-
     // METHOD TO CREATE THE 4 SALES DETAIL PANEL:
     public JPanel createSaleSummaryPanel(String text, String sign, int Data) {
-        Font sz16 = posSystem.FontUtils.loadFont(16f);
+        Font sz16 = fontUtils.loadFont(16f);
         Font sz35 = registerUser.FontUtils.loadFont(35f);
 
         RoundedPanel saleSummaryPanel = new RoundedPanel(30);
@@ -138,5 +130,134 @@ class RoundedPanel extends JPanel {
     public void setForeground(Color fg) {
         super.setForeground(fg);
         repaint();
+    }
+
+    // Add this new class to your project
+    static class IncomeGraphPanel extends JPanel {
+        private Map<String, Double> weeklyData;
+        private Color lineColor = new Color(44, 102, 230);
+        private Color pointColor = new Color(230, 60, 60);
+        private Color gridColor = new Color(200, 200, 200);
+        private Font labelFont = new Font("Arial", Font.PLAIN, 12);
+
+        public IncomeGraphPanel(Map<String, Double> weeklyData) {
+            this.weeklyData = weeklyData;
+            setBackground(Color.WHITE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            if (weeklyData == null || weeklyData.isEmpty()) {
+                drawNoDataMessage(g2);
+                return;
+            }
+
+            drawTitle(g2);
+            drawGrid(g2);
+            drawAxesLabels(g2);
+            drawLineGraph(g2);
+        }
+
+        private void drawNoDataMessage(Graphics2D g2) {
+            g2.setColor(Color.GRAY);
+            g2.setFont(new Font("Arial", Font.BOLD, 16));
+            String message = "No sales data available";
+            int messageWidth = g2.getFontMetrics().stringWidth(message);
+            g2.drawString(message, getWidth()/2 - messageWidth/2, getHeight()/2);
+        }
+
+        private void drawTitle(Graphics2D g2) {
+            g2.setColor(Color.BLACK);
+            g2.setFont(new Font("Arial", Font.BOLD, 16));
+            String title = "Weekly Income Report";
+            int titleWidth = g2.getFontMetrics().stringWidth(title);
+            g2.drawString(title, getWidth()/2 - titleWidth/2, 30);
+        }
+
+        private void drawGrid(Graphics2D g2) {
+            g2.setColor(gridColor);
+
+            // Vertical grid lines
+            int xStep = getWidth() / (weeklyData.size() + 1);
+            for (int i = 1; i <= weeklyData.size(); i++) {
+                int x = i * xStep;
+                g2.drawLine(x, 50, x, getHeight() - 50);
+            }
+
+            // Horizontal grid lines
+            double maxValue = Collections.max(weeklyData.values());
+            int yStep = (getHeight() - 100) / 5;
+            for (int i = 0; i <= 5; i++) {
+                int y = getHeight() - 50 - (i * yStep);
+                g2.drawLine(50, y, getWidth() - 50, y);
+            }
+        }
+
+        private void drawAxesLabels(Graphics2D g2) {
+            g2.setColor(Color.BLACK);
+            g2.setFont(labelFont);
+
+            // X-axis labels (weeks)
+            int xStep = getWidth() / (weeklyData.size() + 1);
+            int labelIndex = 0;
+            for (String week : weeklyData.keySet()) {
+                int x = (labelIndex + 1) * xStep;
+                int y = getHeight() - 30;
+
+                // Shorten label to "Week X"
+                String label = "Week " + week.split(",")[0].trim();
+                int labelWidth = g2.getFontMetrics().stringWidth(label);
+                g2.drawString(label, x - labelWidth/2, y);
+                labelIndex++;
+            }
+
+            // Y-axis labels (amounts)
+            double maxValue = Collections.max(weeklyData.values());
+            int yStep = (getHeight() - 100) / 5;
+            for (int i = 0; i <= 5; i++) {
+                int y = getHeight() - 50 - (i * yStep);
+                String label = String.format("₱%,.0f", maxValue * i / 5);
+                int labelWidth = g2.getFontMetrics().stringWidth(label);
+                g2.drawString(label, 40 - labelWidth, y + 5);
+            }
+        }
+
+        private void drawLineGraph(Graphics2D g2) {
+            double maxValue = Collections.max(weeklyData.values());
+            int xStep = getWidth() / (weeklyData.size() + 1);
+            int prevX = 0, prevY = 0;
+            int pointIndex = 0;
+
+            // Draw line and points
+            g2.setStroke(new BasicStroke(2.5f));
+            for (Map.Entry<String, Double> entry : weeklyData.entrySet()) {
+                int x = (pointIndex + 1) * xStep;
+                int y = getHeight() - 50 - (int)((entry.getValue() / maxValue) * (getHeight() - 100));
+
+                // Draw point
+                g2.setColor(pointColor);
+                g2.fillOval(x - 5, y - 5, 10, 10);
+
+                // Draw line connecting to previous point
+                if (pointIndex > 0) {
+                    g2.setColor(lineColor);
+                    g2.drawLine(prevX, prevY, x, y);
+                }
+
+                // Draw value label
+                g2.setColor(Color.BLACK);
+                String valueLabel = String.format("₱%,.0f", entry.getValue());
+                int labelWidth = g2.getFontMetrics().stringWidth(valueLabel);
+                g2.drawString(valueLabel, x - labelWidth/2, y - 10);
+
+                prevX = x;
+                prevY = y;
+                pointIndex++;
+            }
+        }
     }
 }

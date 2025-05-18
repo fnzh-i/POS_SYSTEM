@@ -2,99 +2,102 @@ package POS_SYSTEM;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedHashMap;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class processOrderPanel extends JPanel {
-
-
-    private double discountTotal = 0.0; // You can implement discount logic if needed
+    // Payment processing fields
+    private double discountTotal = 0.0;
     private double total = 0.0;
     private JTextField cTenderedTField;
     private JLabel changeLabel2;
+
+    // Receipt fields
     private int itemId;
     private String itemName;
     private double itemPrice;
     private int itemQuantity;
     private double Total;
+    private double tax;
+    private double finalAmount;
+    private JPanel receiptItemSummary;
+    private JLabel cashTenderedLabel;
+    private JLabel changeLabel;
+    private JPanel vatReceipt;
+    private Map<String, Integer> productQuantityMap = new LinkedHashMap<>();
+    private String orderId = "ORD-" + generateOrderId();
+    private String cashierName = "Admin"; // You can set this dynamically
 
-    processOrderPanel(List<Product> orderedProducts) {
-        Font sz14 = FontUtils.loadFont(14f);
-        Font sz16 = FontUtils.loadFont(16f);
-        Font sz20 = FontUtils.loadFont(20f);
-        Font sz30 = FontUtils.loadFont(30f);
+    // Ordered products
+    private List<Product> orderedProducts;
+
+    public processOrderPanel(List<Product> orderedProducts) {
+        this.orderedProducts = orderedProducts;
+        Font sz15 = FontUtils.loadFont(15f);
+        Font sz18 = FontUtils.loadFont(18f);
         setLayout(new BorderLayout());
 
-
-
         JPanel processOrder = new JPanel();
-        processOrder.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 10));
-        processOrder.setPreferredSize(new Dimension(1620, 1100));
-        processOrder.setMaximumSize(new Dimension(1240, 980));
+        processOrder.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        processOrder.setPreferredSize(new Dimension(1280, 720));
+        processOrder.setMaximumSize(new Dimension(1280, 720));
         processOrder.setBackground(Color.DARK_GRAY);
 
+        // Order Summary Side
+        JPanel orderSummarySide = createOrderSummarySide(orderedProducts, sz15, sz18);
+        processOrder.add(orderSummarySide);
 
+        // Receipt Side
+        JPanel receiptSide = createReceipt();
+        processOrder.add(receiptSide);
+
+        add(processOrder, BorderLayout.CENTER);
+    }
+
+    private JPanel createOrderSummarySide(List<Product> orderedProducts, Font sz15, Font sz18) {
         JPanel orderSummarySide = new JPanel();
         orderSummarySide.setLayout(new BoxLayout(orderSummarySide, BoxLayout.Y_AXIS));
-        orderSummarySide.setPreferredSize(new Dimension(500, 800));
-        orderSummarySide.setAlignmentX(Component.CENTER_ALIGNMENT);
+        orderSummarySide.setPreferredSize(new Dimension(400, 650));
+        orderSummarySide.setAlignmentX(Component.LEFT_ALIGNMENT);
         orderSummarySide.setOpaque(false);
 
-
+        // Order Summary Header
         JPanel osPanel = new JPanel();
         osPanel.setOpaque(false);
         osPanel.setLayout(new BorderLayout());
-        osPanel.setPreferredSize(new Dimension(500, 40));
-        osPanel.setMaximumSize(new Dimension(500, 40));
+        osPanel.setPreferredSize(new Dimension(400, 35));
+        osPanel.setMaximumSize(new Dimension(400, 35));
 
         JLabel osLabel = new JLabel("Order Summary");
         osLabel.setForeground(Color.white);
-        osLabel.setFont(sz20);
+        osLabel.setFont(sz18);
         osPanel.add(osLabel, BorderLayout.WEST);
         orderSummarySide.add(osPanel);
 
-
-        JPanel plusBtnPanel = new JPanel();
-        plusBtnPanel.setOpaque(false);
-        plusBtnPanel.setLayout(new BorderLayout());
-        plusBtnPanel.setPreferredSize(new Dimension(500, 40));
-        plusBtnPanel.setMaximumSize(new Dimension(500, 40));
-
-        JButton plusButton = new JButton("+");
-        plusButton.setBorderPainted(false);
-        plusButton.setFocusPainted(false);
-        plusButton.setForeground(Color.WHITE);
-        plusButton.setBackground(Color.gray);
-        plusBtnPanel.add(plusButton, BorderLayout.EAST);
-        orderSummarySide.add(plusBtnPanel);
-
-
+        // Order Items
         JPanel orderProcessSummary = new JPanel();
         orderProcessSummary.setLayout(new BoxLayout(orderProcessSummary, BoxLayout.Y_AXIS));
         orderProcessSummary.setBackground(Color.decode("#2A273A"));
 
         JScrollPane orderSummaryScroll = new JScrollPane(orderProcessSummary);
         orderSummaryScroll.setBorder(null);
-        orderSummaryScroll.setPreferredSize(new Dimension(300, 350));
+        orderSummaryScroll.setPreferredSize(new Dimension(380, 300));
         orderSummaryScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderSummaryScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         orderSummaryScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         orderSummaryScroll.setOpaque(false);
 
-
-        JScrollBar verticalScrollBar2 = orderSummaryScroll.getVerticalScrollBar();
-        verticalScrollBar2.setUnitIncrement(30);
-        verticalScrollBar2.setBlockIncrement(100);
-        orderSummarySide.add(orderSummaryScroll);
-
-        Map<String, Integer> productQuantityMap = new LinkedHashMap<>();
+        // Add order items
+        productQuantityMap.clear();
         for (Product product : orderedProducts) {
             String key = product.getName() + " - " + product.getSize();
             productQuantityMap.put(key, productQuantityMap.getOrDefault(key, 0) + 1);
         }
-
-        // getting the products that ordered
 
         double subtotal = 0.0;
         for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
@@ -112,185 +115,238 @@ public class processOrderPanel extends JPanel {
             subtotal += price * quantity;
             JLabel productLabel = new JLabel(quantity + "x | " + productNameSize + ", ₱" + String.format("%.2f", price * quantity));
             productLabel.setForeground(Color.WHITE);
-            productLabel.setFont(sz20);
-            productLabel.setBorder(BorderFactory.createEmptyBorder(10,10,0,0));
+            productLabel.setFont(sz18);
             orderProcessSummary.add(productLabel);
         }
 
         orderSummarySide.add(orderSummaryScroll);
 
+        // Subtotal Panel
+        JPanel subTotalPanel = createSubTotalPanel(subtotal, sz15);
+        orderSummarySide.add(subTotalPanel);
 
+        // Process Buttons
+        JPanel processButtonPanel = createProcessButtons(sz15);
+        orderSummarySide.add(processButtonPanel);
 
+        return orderSummarySide;
+    }
+
+    private JPanel createSubTotalPanel(double subtotal, Font sz15) {
         JPanel subTotalPanel = new JPanel();
         subTotalPanel.setLayout(new BoxLayout(subTotalPanel, BoxLayout.Y_AXIS));
         subTotalPanel.setOpaque(false);
 
-
+        // Subtotal
         JPanel stPanel = new JPanel();
         stPanel.setOpaque(false);
         stPanel.setLayout(new BorderLayout());
-        stPanel.setPreferredSize(new Dimension(500, 30));
-        stPanel.setMaximumSize(new Dimension(500, 30));
+        stPanel.setPreferredSize(new Dimension(400, 25));
+        stPanel.setMaximumSize(new Dimension(400, 25));
 
         JLabel subtotalLabel = new JLabel("Sub total: ₱" + String.format("%.2f", subtotal));
-        subtotalLabel.setFont(sz16);
+        subtotalLabel.setFont(sz15);
         subtotalLabel.setForeground(Color.WHITE);
         stPanel.add(subtotalLabel, BorderLayout.WEST);
         subTotalPanel.add(stPanel);
 
+        // Discount
         JPanel dPanel = new JPanel();
         dPanel.setOpaque(false);
         dPanel.setLayout(new BorderLayout());
-        dPanel.setPreferredSize(new Dimension(500, 30));
-        dPanel.setMaximumSize(new Dimension(500, 30));
+        dPanel.setPreferredSize(new Dimension(400, 25));
+        dPanel.setMaximumSize(new Dimension(400, 25));
         JLabel discount = new JLabel("Discount: ");
-        discount.setFont(sz16);
+        discount.setFont(sz15);
         discount.setForeground(Color.WHITE);
         dPanel.add(discount, BorderLayout.WEST);
         subTotalPanel.add(dPanel);
 
+        // Total
         total = subtotal - discountTotal;
-        if(total < 0) total = 0;
+        if (total < 0) total = 0;
 
         JPanel tPanel = new JPanel();
         tPanel.setOpaque(false);
         tPanel.setLayout(new BorderLayout());
-        tPanel.setPreferredSize(new Dimension(500, 30));
-        tPanel.setMaximumSize(new Dimension(500, 30));
+        tPanel.setPreferredSize(new Dimension(400, 25));
+        tPanel.setMaximumSize(new Dimension(400, 25));
         JLabel totalLabel = new JLabel("Total: ₱" + String.format("%.2f", total));
-        totalLabel.setFont(sz16);
+        totalLabel.setFont(sz15);
         totalLabel.setForeground(Color.WHITE);
         tPanel.add(totalLabel, BorderLayout.WEST);
         subTotalPanel.add(tPanel);
 
-        JPanel cashTenderedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        // Cash Tendered
+        JPanel cashTenderedPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         cashTenderedPanel.setOpaque(false);
-        cashTenderedPanel.setMaximumSize(new Dimension(500, 60));
+        cashTenderedPanel.setMaximumSize(new Dimension(400, 50));
 
         JLabel cashTendered = new JLabel("Cash Tendered: ");
         cashTendered.setForeground(Color.white);
-        cashTendered.setFont(sz20);
+        cashTendered.setFont(sz15);
         cashTenderedPanel.add(cashTendered);
 
         cTenderedTField = new JTextField();
-        cTenderedTField.setPreferredSize(new Dimension(150, 50));
+        cTenderedTField.setPreferredSize(new Dimension(120, 40));
         cTenderedTField.setOpaque(false);
         cTenderedTField.setBorder(BorderFactory.createLineBorder(Color.white, 1, true));
-        cTenderedTField.setFont(sz20);
+        cTenderedTField.setFont(sz15);
         cTenderedTField.setForeground(Color.WHITE);
         cTenderedTField.setText("");
         cashTenderedPanel.add(cTenderedTField);
 
         subTotalPanel.add(cashTenderedPanel);
 
-        JPanel changePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        changePanel.setPreferredSize(new Dimension(500, 60));
-        changePanel.setMaximumSize(new Dimension(500,60));
+        // Change
+        JPanel changePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        changePanel.setPreferredSize(new Dimension(400, 50));
+        changePanel.setMaximumSize(new Dimension(400, 50));
         changePanel.setOpaque(false);
 
         JLabel changeLabel1 = new JLabel("Change: ");
         changeLabel1.setForeground(Color.white);
-        changeLabel1.setFont(sz20);
+        changeLabel1.setFont(sz15);
         changePanel.add(changeLabel1);
 
         changeLabel2 = new JLabel("₱ 0.00");
         changeLabel2.setOpaque(false);
-        changeLabel2.setFont(sz20);
+        changeLabel2.setFont(sz15);
         changeLabel2.setForeground(Color.WHITE);
         changePanel.add(changeLabel2);
 
         subTotalPanel.add(changePanel);
 
-        orderSummarySide.add(subTotalPanel);
+        return subTotalPanel;
+    }
 
-        // Process Buttons for order confirmation and cancellation
+    private JPanel createProcessButtons(Font sz15) {
         JPanel processButtonPanel = new JPanel();
-        processButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 0));
-        processButtonPanel.setPreferredSize(new Dimension(600, getHeight()));
+        processButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        processButtonPanel.setPreferredSize(new Dimension(400, getHeight()));
         processButtonPanel.setOpaque(false);
 
+        // Cancel Button
         JButton cancelBtn = new JButton("Cancel");
         cancelBtn.setForeground(Color.WHITE);
         cancelBtn.setBackground(Color.decode("#BD1212"));
-        cancelBtn.setPreferredSize(new Dimension(140, 50));
+        cancelBtn.setPreferredSize(new Dimension(120, 40));
         cancelBtn.setBorderPainted(false);
         cancelBtn.setFocusPainted(false);
-        cancelBtn.setFont(sz16);
+        cancelBtn.setFont(sz15);
         cancelBtn.addActionListener(e -> {
-
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (topFrame instanceof posSystem posFrame) {
                 posFrame.switchToPanel(posFrame.getOrderItemPanel());
             }
         });
 
+        // Process Button
         JButton processBtn = new JButton("Confirm Payment");
         processBtn.setForeground(Color.WHITE);
-        processBtn.setPreferredSize(new Dimension(160, 50));
+        processBtn.setPreferredSize(new Dimension(150, 40));
         processBtn.setBackground(Color.decode("#F9A61A"));
         processBtn.setBorderPainted(false);
         processBtn.setFocusPainted(false);
-        processBtn.setFont(sz16);
-        processBtn.addActionListener(e -> {
-            String cashInput = cTenderedTField.getText().trim().replace("₱", "").trim();
-            try {
-                double cashTenderedAmount = Double.parseDouble(cashInput);
-                if (cashTenderedAmount < total) {
-                    JOptionPane.showMessageDialog(this, "Insufficient cash tendered. Please enter an amount equal or greater than the total.", "Payment Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                double change = cashTenderedAmount - total;
-                changeLabel2.setText("₱ " + String.format("%.2f", change));
-                JOptionPane.showMessageDialog(this, "Payment successful!\nChange: ₱ " + String.format("%.2f", change), "Payment Confirmed", JOptionPane.INFORMATION_MESSAGE);
-
-                // After payment, clear order and switch back to orderItemPanel
-                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-                if (topFrame instanceof posSystem) {
-                    posSystem posFrame = (posSystem) topFrame;
-
-                    posFrame.getOrderItemPanel().clearOrder();
-                    posFrame.switchToPanel(posFrame.getOrderItemPanel());
-                    revalidate();
-                    repaint();
-                }
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid numeric amount for cash tendered.", "Input Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
+        processBtn.setFont(sz15);
+        processBtn.addActionListener(e -> processPayment());
 
         processButtonPanel.add(cancelBtn);
         processButtonPanel.add(processBtn);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        orderSummarySide.add(processButtonPanel);
-
-        processOrder.add(orderSummarySide);
-
-        //receipt call:
-        processOrder.add(createReceipt());
-
-        add(processOrder, BorderLayout.CENTER);
-
-
-
+        return processButtonPanel;
     }
 
-    //RECEIPT METHOD, PWEDE MO GAWING PAREMETARIZED IKAW NA BAHALA IF PAANO MO AYUSIN
-    public JPanel createReceipt(){
+    private void processPayment() {
+        String cashInput = cTenderedTField.getText().trim().replace("₱", "").trim();
+        try {
+            double cashTenderedAmount = Double.parseDouble(cashInput);
+            if (cashTenderedAmount < total) {
+                JOptionPane.showMessageDialog(this,
+                        "Insufficient cash tendered. Please enter an amount equal or greater than the total.",
+                        "Payment Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            double change = cashTenderedAmount - total;
+            changeLabel2.setText("₱ " + String.format("%.2f", change));
+
+            // Update receipt labels
+            cashTenderedLabel.setText("Cash Tendered: ₱" + String.format("%.2f", cashTenderedAmount));
+            changeLabel.setText("Change: ₱" + String.format("%.2f", change));
+
+            // Save order to history
+            saveOrderToHistory();
+
+            JOptionPane.showMessageDialog(this,
+                    "Payment successful!\nChange: ₱ " + String.format("%.2f", change),
+                    "Payment Confirmed",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            // After payment, clear order and switch back to orderItemPanel
+            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (topFrame instanceof posSystem) {
+                posSystem posFrame = (posSystem) topFrame;
+                posFrame.getOrderItemPanel().clearOrder();
+                posFrame.switchToPanel(posFrame.getOrderItemPanel());
+                revalidate();
+                repaint();
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Please enter a valid numeric amount for cash tendered.",
+                    "Input Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private int generateDatabaseOrderId() {
+        // same timestamp but return just the numeric portion
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        String timestampStr = dateFormat.format(new Date());
+
+        // take the last 9 digits to ensure it fits in an int
+        if (timestampStr.length() > 9) {
+            timestampStr = timestampStr.substring(timestampStr.length() - 9);
+        }
+        return Integer.parseInt(timestampStr);
+    }
+
+
+    private String generateOrderId() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        return dateFormat.format(new Date());
+    }
+
+    private void saveOrderToHistory() {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM dd, yyyy hh:mm a");
+        String formattedDate = dateFormat.format(new Date());
+
+        int dbOrderId = generateDatabaseOrderId();
+
+        for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
+            String productNameSize = entry.getKey();
+            int quantity = entry.getValue();
+
+            for (Product product : orderedProducts) {
+                String key = product.getName() + " - " + product.getSize();
+                if (key.equals(productNameSize)) {
+                    orderHistoryDBManager.addProductToDatabase(
+                            formattedDate,
+                            dbOrderId,
+                            product.getName(),
+                            product.getSize(),
+                            product.getPrice(),
+                            quantity
+                    );
+                    break;
+                }
+            }
+        }
+    }
+
+    public JPanel createReceipt() {
         Font sz13 = FontUtils.loadFont(13f);
         Font sz14 = FontUtils.loadFont(14f);
         Font sz15 = FontUtils.loadFont(15f);
@@ -303,18 +359,15 @@ public class processOrderPanel extends JPanel {
         JPanel receiptSide = new JPanel();
         receiptSide.setLayout(new BorderLayout());
         receiptSide.setBackground(Color.WHITE);
-        receiptSide.setPreferredSize(new Dimension(500,800));
-        receiptSide.setMaximumSize(new Dimension(500,800));
+        receiptSide.setPreferredSize(new Dimension(500, 800));
+        receiptSide.setMaximumSize(new Dimension(500, 800));
 
-
-        //RECEIPT HEADER:
+        // RECEIPT HEADER:
         JPanel receiptHeader = new JPanel();
         receiptHeader.setLayout(new BoxLayout(receiptHeader, BoxLayout.Y_AXIS));
-        receiptHeader.setBorder(BorderFactory.createLineBorder(Color.black,1));
+        receiptHeader.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         receiptHeader.setAlignmentY(Component.CENTER_ALIGNMENT);
-        receiptHeader.setPreferredSize(new Dimension(500,150));
-
-
+        receiptHeader.setPreferredSize(new Dimension(500, 150));
 
         ImageIcon systemLogo = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
         JLabel pcuLogo = new JLabel();
@@ -339,40 +392,33 @@ public class processOrderPanel extends JPanel {
         receiptWebsite.setForeground(Color.BLACK);
         receiptHeader.add(receiptWebsite);
 
-        JLabel receiptAddress = new JLabel("<html><p>"+"Philippine Christian University, 1648 Taft Avenue corner Pedro Gil St., Malate, Manila"+"</p></html>");
-        receiptAddress.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+        JLabel receiptAddress = new JLabel("<html><p>" + "Philippine Christian University, 1648 Taft Avenue corner Pedro Gil St., Malate, Manila" + "</p></html>");
+        receiptAddress.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         receiptAddress.setFont(sz14);
         receiptAddress.setForeground(Color.black);
-        receiptAddress.setPreferredSize(new Dimension(400,90));
+        receiptAddress.setPreferredSize(new Dimension(400, 90));
 
         receiptHeader.add(receiptAddress);
-
         receiptSide.add(receiptHeader, BorderLayout.NORTH);
 
-        //MAIN CENTER CONTAINER FOR THE OVERALL RECEIPT DETAILS:
+        // MAIN CENTER CONTAINER FOR THE OVERALL RECEIPT DETAILS:
         JPanel receiptDetailContainer = new JPanel();
         receiptDetailContainer.setLayout(new BoxLayout(receiptDetailContainer, BoxLayout.Y_AXIS));
-        receiptDetailContainer.setPreferredSize(new Dimension(500,500));
-        receiptDetailContainer.setMaximumSize(new Dimension(500,500));
-        receiptDetailContainer.setBorder(BorderFactory.createLineBorder(Color.black,1));
+        receiptDetailContainer.setPreferredSize(new Dimension(500, 500));
+        receiptDetailContainer.setMaximumSize(new Dimension(500, 500));
+        receiptDetailContainer.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
-
-
-        //PRODUCT KET INFORMATION CONTAINER: FOR PRODUCT NAME,PRICE,QTY, AND TOTAL
-        JPanel receiptItemSummary = new JPanel();
+        // PRODUCT INFORMATION CONTAINER
+        receiptItemSummary = new JPanel();
         receiptItemSummary.setLayout(new BoxLayout(receiptItemSummary, BoxLayout.Y_AXIS));
-        receiptItemSummary.setPreferredSize(new Dimension(450,300));
-        receiptItemSummary.setMaximumSize(new Dimension(450,300));
+        receiptItemSummary.setPreferredSize(new Dimension(450, 300));
+        receiptItemSummary.setMaximumSize(new Dimension(450, 300));
 
+        JPanel receiptItemTitle = new JPanel(new GridLayout(0, 4));
+        receiptItemTitle.setPreferredSize(new Dimension(450, 50));
+        receiptItemTitle.setMaximumSize(new Dimension(450, 50));
 
-
-
-        JPanel receiptItemTitle = new JPanel(new GridLayout(0,4));
-        receiptItemTitle.setPreferredSize(new Dimension(450,50));
-        receiptItemTitle.setMaximumSize(new Dimension(450,50));
-
-
-        //COLUMN TITLES:
+        // COLUMN TITLES:
         JLabel itemTitle = new JLabel("ITEM");
         itemTitle.setForeground(Color.BLACK);
         itemTitle.setFont(sz17);
@@ -395,171 +441,170 @@ public class processOrderPanel extends JPanel {
 
         receiptItemSummary.add(receiptItemTitle);
 
-        //SAMPLE DATA SETTING
-        setItemId(123456789);
-        setItemName("Jack n' Jill Piattos");
-        setItemPrice(15.00);
-        setItemQuantity(4);
-        setTotal(getItemPrice(),getItemQuantity());
+        int totalQuantity = 0;
+        double totalCost = 0.0;
+        double vatRate = 0.12;
 
-        //ADDING DETAILS:
-        receiptItemSummary.add(createItemDetail(getItemId(),getItemName(),getItemPrice(),getItemQuantity(),getTotal()));
+        // Add ordered items to receipt
+        for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
+            String productNameSize = entry.getKey();
+            itemQuantity = entry.getValue();
+            itemPrice = 0.0;
+
+            // Find the product to get its price
+            for (Product p : orderedProducts) {
+                String key = p.getName() + " - " + p.getSize();
+                if (key.equals(productNameSize)) {
+                    itemPrice = p.getPrice();
+                    // Add item details to the receipt
+                    receiptItemSummary.add(createItemDetail(p.getItemId(), productNameSize, itemPrice, itemQuantity, setTotal(itemPrice, itemQuantity)));
+                    break;
+                }
+            }
+
+            // Update totals
+            totalQuantity += itemQuantity;
+            totalCost += itemPrice * itemQuantity;
+            tax = totalCost * vatRate;
+            finalAmount = totalCost + tax;
+        }
 
         receiptDetailContainer.add(receiptItemSummary);
 
-
-
-        //SUBTOTAL:
+        // SUBTOTAL SECTION
         JPanel subTotalContainer = new JPanel(new BorderLayout());
-        subTotalContainer.setPreferredSize(new Dimension(450,150));
-        subTotalContainer.setMaximumSize(new Dimension(450,150));
+        subTotalContainer.setPreferredSize(new Dimension(450, 150));
+        subTotalContainer.setMaximumSize(new Dimension(450, 150));
         subTotalContainer.setOpaque(false);
 
         JPanel receiptSubtotal = new JPanel();
         receiptSubtotal.setLayout(new BoxLayout(receiptSubtotal, BoxLayout.Y_AXIS));
         subTotalContainer.add(receiptSubtotal, BorderLayout.WEST);
 
-
-
-        JLabel subTotalLabel = new JLabel("SUBTOTAL:");
-        subTotalLabel.setForeground(Color.BLACK);
-        subTotalLabel.setFont(sz16);
-        subTotalLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
-        receiptSubtotal.add(subTotalLabel);
-
-        JLabel totalItemsLabel = new JLabel("Total Items: ");
+        JLabel totalItemsLabel = new JLabel("Total Items: " + totalQuantity);
         totalItemsLabel.setFont(sz13);
         totalItemsLabel.setForeground(Color.black);
-        totalItemsLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        totalItemsLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptSubtotal.add(totalItemsLabel);
 
-        JLabel totalLabel = new JLabel("Total Price: ");
+        JLabel totalLabel = new JLabel("Subtotal: ₱" + String.format("%.2f", totalCost));
         totalLabel.setFont(sz16);
         totalLabel.setForeground(Color.black);
-        totalLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        totalLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptSubtotal.add(totalLabel);
 
-        JLabel cashTenderedLabel = new JLabel("Cash Tendered: ");
+        cashTenderedLabel = new JLabel("Cash Tendered: ");
         cashTenderedLabel.setFont(sz13);
         cashTenderedLabel.setForeground(Color.black);
-        cashTenderedLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        cashTenderedLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptSubtotal.add(cashTenderedLabel);
 
-        JLabel changeLabel = new JLabel("Change: ");
+        changeLabel = new JLabel("Change: ");
         changeLabel.setFont(sz13);
         changeLabel.setForeground(Color.black);
-        changeLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        changeLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptSubtotal.add(changeLabel);
 
         receiptDetailContainer.add(subTotalContainer);
 
-
-        //VAT INFORMATION:
+        // VAT INFORMATION
         JPanel vatContainer = new JPanel(new BorderLayout());
         vatContainer.setOpaque(false);
-        vatContainer.setPreferredSize(new Dimension(450,180));
-        vatContainer.setMaximumSize(new Dimension(450,180));
+        vatContainer.setPreferredSize(new Dimension(450, 180));
+        vatContainer.setMaximumSize(new Dimension(450, 180));
 
-        JPanel vatReceipt = new JPanel();
+        vatReceipt = new JPanel();
         vatReceipt.setLayout(new BoxLayout(vatReceipt, BoxLayout.Y_AXIS));
         vatReceipt.setOpaque(false);
         vatContainer.add(vatReceipt, BorderLayout.WEST);
 
-        //JUST A TITLE NO VALUE
         JLabel vatInformationLabel = new JLabel("VAT INFORMATION:");
         vatInformationLabel.setForeground(Color.BLACK);
         vatInformationLabel.setFont(sz16);
-        vatInformationLabel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+        vatInformationLabel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         vatReceipt.add(vatInformationLabel);
 
-
-        JLabel vatSaleLabel = new JLabel("Vat Sale: ");
+        JLabel vatSaleLabel = new JLabel("Vatable Sales: ₱" + String.format("%.2f", finalAmount));
         vatSaleLabel.setForeground(Color.BLACK);
         vatSaleLabel.setFont(sz13);
-        vatSaleLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        vatSaleLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         vatReceipt.add(vatSaleLabel);
 
         JLabel vatExemptSaleLabel = new JLabel("Vat Exempt Sale: ");
         vatExemptSaleLabel.setForeground(Color.BLACK);
         vatExemptSaleLabel.setFont(sz13);
-        vatExemptSaleLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        vatExemptSaleLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         vatReceipt.add(vatExemptSaleLabel);
 
         JLabel vatZeroRatedLabel = new JLabel("Vat Zero Rated Sale: ");
         vatZeroRatedLabel.setForeground(Color.BLACK);
         vatZeroRatedLabel.setFont(sz13);
-        vatZeroRatedLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        vatZeroRatedLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         vatReceipt.add(vatZeroRatedLabel);
 
-        JLabel vatPercentageLabel = new JLabel("12% Vat: ");
+        JLabel vatPercentageLabel = new JLabel("12% Vat: ₱" + String.format("%.2f", tax));
         vatPercentageLabel.setForeground(Color.BLACK);
         vatPercentageLabel.setFont(sz13);
-        vatPercentageLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        vatPercentageLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         vatReceipt.add(vatPercentageLabel);
 
         receiptDetailContainer.add(vatContainer);
 
-
-        //RECEIPT ADDITIONAL INFO:
+        // RECEIPT ADDITIONAL INFO
         JPanel receiptInfoCont = new JPanel(new BorderLayout());
         receiptInfoCont.setOpaque(false);
-        receiptInfoCont.setPreferredSize(new Dimension(450,100));
-        receiptInfoCont.setMaximumSize(new Dimension(450,100));
+        receiptInfoCont.setPreferredSize(new Dimension(450, 100));
+        receiptInfoCont.setMaximumSize(new Dimension(450, 100));
 
         JPanel receiptInfo = new JPanel();
         receiptInfo.setLayout(new BoxLayout(receiptInfo, BoxLayout.Y_AXIS));
         receiptInfo.setOpaque(false);
         receiptInfoCont.add(receiptInfo);
 
-        //ORDER ID:
-        JLabel receiptOrderId = new JLabel("Order Id: ");
+        // ORDER ID
+        JLabel receiptOrderId = new JLabel("Order Id: " + orderId);
         receiptOrderId.setForeground(Color.BLACK);
         receiptOrderId.setFont(sz13);
-        receiptOrderId.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        receiptOrderId.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptInfo.add(receiptOrderId);
 
-        //CASHIER NAME:
-        JLabel cashierNameLabel = new JLabel("Cashier Name: ");
+        // CASHIER NAME
+        JLabel cashierNameLabel = new JLabel("Cashier Name: " + cashierName);
         cashierNameLabel.setForeground(Color.BLACK);
         cashierNameLabel.setFont(sz13);
-        cashierNameLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        cashierNameLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptInfo.add(cashierNameLabel);
 
-        //DATE:
-        JLabel receiptDateLabel = new JLabel("Date: ");
+        // DATE
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy hh:mm a");
+        JLabel receiptDateLabel = new JLabel("Date: " + dateFormat.format(new Date()));
         receiptDateLabel.setForeground(Color.BLACK);
         receiptDateLabel.setFont(sz13);
-        receiptDateLabel.setBorder(BorderFactory.createEmptyBorder(5,0,5,0));
+        receiptDateLabel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
         receiptInfo.add(receiptDateLabel);
 
         receiptDetailContainer.add(receiptInfoCont);
-
         receiptSide.add(receiptDetailContainer, BorderLayout.CENTER);
 
-
-
-
-
-        //RECEIPT FOOTER:
+        // RECEIPT FOOTER
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new BorderLayout());
-        footerPanel.setPreferredSize(new Dimension(500,100));
-        footerPanel.setMaximumSize(new Dimension(500,100));
-        footerPanel.setBorder(BorderFactory.createLineBorder(Color.black,1));
+        footerPanel.setPreferredSize(new Dimension(500, 100));
+        footerPanel.setMaximumSize(new Dimension(500, 100));
+        footerPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
-        JLabel footerText = new JLabel("<html><p>"+"This serves as your SALES INVOICE. Thank you, and Please Come Again. "+"</p></html>");
+        JLabel footerText = new JLabel("<html><p>" + "This serves as your SALES INVOICE. Thank you, and Please Come Again. " + "</p></html>");
         footerText.setForeground(Color.black);
         footerText.setFont(sz14);
 
         footerPanel.add(footerText, BorderLayout.CENTER);
-
         receiptSide.add(footerPanel, BorderLayout.SOUTH);
-
 
         return receiptSide;
     }
-    //FOR METHOD PRODUCT DETAILS ITO PARA DYNAMIC AND ROW BY ROW YUNG PAG LAGAY NG PRODUCTS:
-    public JPanel createItemDetail(int productId,String productName, double productPrice, int productQuantity, double priceTotal){
+
+    public JPanel createItemDetail(int productId, String productName, double productPrice,
+                                   int productQuantity, double priceTotal) {
         Font sz13 = FontUtils.loadFont(13f);
         Font sz15 = FontUtils.loadFont(15f);
         Font sz16 = FontUtils.loadFont(16f);
@@ -584,7 +629,7 @@ public class processOrderPanel extends JPanel {
 
         itemDetail.add(itemNameId);
 
-        JLabel prdctPrice = new JLabel("" + productPrice);
+        JLabel prdctPrice = new JLabel("₱" + String.format("%.2f", productPrice));
         prdctPrice.setForeground(Color.black);
         prdctPrice.setFont(sz16);
         itemDetail.add(prdctPrice);
@@ -594,65 +639,53 @@ public class processOrderPanel extends JPanel {
         prdctQuantity.setFont(sz16);
         itemDetail.add(prdctQuantity);
 
-        JLabel prdctTotal = new JLabel(""+priceTotal);
+        JLabel prdctTotal = new JLabel("₱"+String.format("%.2f", priceTotal));
         prdctTotal.setForeground(Color.black);
         prdctTotal.setFont(sz16);
         itemDetail.add(prdctTotal);
 
-
-
         return itemDetail;
-
     }
 
-
-    //SETTERS FOR PRODUCT DETAILS:
-
-    public void setItemId(int itemId){
+    // Setters and Getters
+    public void setItemId(int itemId) {
         this.itemId = itemId;
     }
-    public void setItemName(String itemName){
+
+    public void setItemName(String itemName) {
         this.itemName = itemName;
     }
 
-    public void setItemPrice(double itemPrice){
+    public void setItemPrice(double itemPrice) {
         this.itemPrice = itemPrice;
     }
 
-    public void setItemQuantity(int itemQuantity){
+    public void setItemQuantity(int itemQuantity) {
         this.itemQuantity = itemQuantity;
     }
 
-    public void setTotal(double itemPrice, int itemQuantity){
+    public double setTotal(double itemPrice, int itemQuantity) {
         this.Total = (itemPrice * itemQuantity);
+        return this.Total;
     }
 
-
-
-
-    //GETTERS FOR PRODUCT DETAILS:
-
-    public int getItemId(){
+    public int getItemId() {
         return itemId;
     }
 
-    public String getItemName(){
+    public String getItemName() {
         return itemName;
     }
 
-    public double getItemPrice(){
+    public double getItemPrice() {
         return itemPrice;
     }
 
-    public int getItemQuantity(){
+    public int getItemQuantity() {
         return itemQuantity;
     }
 
-    public double getTotal(){
+    public double getTotal() {
         return Total;
     }
-
-
-
-
 }

@@ -4,6 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class AddItem extends JPanel {
     private final User currentUser;
@@ -14,6 +18,7 @@ public class AddItem extends JPanel {
     private JTextField priceField;
     private JTextArea descArea;
     private JButton actionButton;
+    private JButton addImageButton; // New button for adding images
 
     // Constructor for adding new items
     public AddItem(User currentUser) {
@@ -116,23 +121,33 @@ public class AddItem extends JPanel {
         descArea.setWrapStyleWord(true);
         mainPanel.add(descArea);
 
-        // Action button (Add/Update)
+        // Add Image button - NEW BUTTON ADDED HERE
+        addImageButton = new JButton("Add Image");
+        addImageButton.setFont(new Font("Roboto", Font.BOLD, 18));
+        addImageButton.setBackground(new Color(108, 117, 125)); // Gray color
+        addImageButton.setForeground(Color.WHITE);
+        addImageButton.setFocusPainted(false);
+        addImageButton.setBounds(60, 440, 180, 45);
+        addImageButton.addActionListener(this::handleImageUpload);
+        mainPanel.add(addImageButton);
+
+        // Action button (Add/Update) - MOVED DOWN
         actionButton = new JButton(productToEdit == null ? "+ Add Item" : "Update Item");
         actionButton.setFont(new Font("Roboto", Font.BOLD, 18));
         actionButton.setBackground(new Color(255, 193, 7));
         actionButton.setForeground(Color.BLACK);
         actionButton.setFocusPainted(false);
-        actionButton.setBounds(60, 440, 180, 45);
+        actionButton.setBounds(60, 500, 180, 45); // Changed y-position from 440 to 500
         actionButton.addActionListener(this::saveProduct);
         mainPanel.add(actionButton);
 
-        // Cancel button
+        // Cancel button - MOVED DOWN
         JButton cancelButton = new JButton("Cancel");
         cancelButton.setFont(new Font("Roboto", Font.BOLD, 18));
         cancelButton.setBackground(new Color(220, 53, 69));
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setFocusPainted(false);
-        cancelButton.setBounds(260, 440, 180, 45);
+        cancelButton.setBounds(260, 500, 180, 45); // Changed y-position from 440 to 500
         cancelButton.addActionListener(e -> {
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (topFrame instanceof posSystem) {
@@ -153,6 +168,67 @@ public class AddItem extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
     }
 
+    // NEW METHOD: Handle image upload
+    private String imagePath = ""; // Add this as a class field to store the image path
+
+    private void handleImageUpload(ActionEvent e) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select Product Image");
+
+        // Filter for image files
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+            @Override
+            public boolean accept(java.io.File f) {
+                String name = f.getName().toLowerCase();
+                return f.isDirectory() ||
+                        name.endsWith(".jpg") ||
+                        name.endsWith(".jpeg") ||
+                        name.endsWith(".png") ||
+                        name.endsWith(".gif");
+            }
+
+            @Override
+            public String getDescription() {
+                return "Image Files (*.jpg, *.jpeg, *.png, *.gif)";
+            }
+        });
+
+        int userSelection = fileChooser.showOpenDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            java.io.File selectedFile = fileChooser.getSelectedFile();
+
+            // Create an images directory if it doesn't exist
+            File imagesDir = new File("images");
+            if (!imagesDir.exists()) {
+                imagesDir.mkdir();
+            }
+
+            try {
+                // Copy the file to the images directory
+                String newFileName = System.currentTimeMillis() + "_" + selectedFile.getName();
+                File destination = new File(imagesDir, newFileName);
+
+                Files.copy(selectedFile.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                // Store the relative path
+                imagePath = "images/" + newFileName;
+
+                JOptionPane.showMessageDialog(this,
+                        "Image uploaded successfully!",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Error saving image: " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    // Then modify the saveProduct method to include the image path:
     private void saveProduct(ActionEvent e) {
         try {
             String name = nameField.getText();
@@ -167,7 +243,7 @@ public class AddItem extends JPanel {
 
             if (productToEdit == null) {
                 // Add new product
-                Product newProduct = new Product(name, size, "", price, category, 0);
+                Product newProduct = new Product(name, size, imagePath, price, category, 0);
                 ProductDBManager.addProduct(newProduct);
                 JOptionPane.showMessageDialog(this, "Product added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -176,9 +252,15 @@ public class AddItem extends JPanel {
                 productToEdit.setSize(size);
                 productToEdit.setPrice(price);
                 productToEdit.setCategory(category);
+                if (!imagePath.isEmpty()) {
+                    productToEdit.setImage(imagePath);
+                }
                 ProductDBManager.updateProduct(productToEdit);
                 JOptionPane.showMessageDialog(this, "Product updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             }
+
+            // Fire property change to notify listeners
+            firePropertyChange("productUpdated", false, true);
 
             // Return to menu management
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);

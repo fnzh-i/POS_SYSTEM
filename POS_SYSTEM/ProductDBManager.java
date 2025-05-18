@@ -28,12 +28,12 @@ class ProductDBManager {
                 XSSFSheet sheet = workbook.createSheet(SHEET_NAME);
 
                 Row headerRow = sheet.createRow(0);
-                headerRow.createCell(COL_ID).setCellValue("itemid");
-                headerRow.createCell(COL_NAME).setCellValue("name");
-                headerRow.createCell(COL_SIZE).setCellValue("size");
-                headerRow.createCell(COL_IMAGE).setCellValue("image");
-                headerRow.createCell(COL_PRICE).setCellValue("price");
-                headerRow.createCell(COL_CATEGORY).setCellValue("category");
+                headerRow.createCell(COL_ID).setCellValue("itemID");
+                headerRow.createCell(COL_NAME).setCellValue("Name");
+                headerRow.createCell(COL_SIZE).setCellValue("Size");
+                headerRow.createCell(COL_IMAGE).setCellValue("Image");
+                headerRow.createCell(COL_PRICE).setCellValue("Price");
+                headerRow.createCell(COL_CATEGORY).setCellValue("Category");
 
                 file.getParentFile().mkdirs();
 
