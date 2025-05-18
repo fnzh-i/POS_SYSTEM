@@ -144,7 +144,7 @@ class orderHistory extends JPanel {
 
         JPanel createOHItemPanel = new JPanel();
         createOHItemPanel.setOpaque(false);
-        createOHItemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 200, 0));
+        createOHItemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 0));
         createOHItemPanel.setPreferredSize(new Dimension(1000, 100));
         createOHItemPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 

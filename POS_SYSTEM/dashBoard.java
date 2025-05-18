@@ -28,7 +28,7 @@ public class dashBoard extends JPanel {
         upperPanel.add(createSaleSummaryPanel("Number of Customer", "", 0)); // Placeholder (you can calculate customers later)
         upperPanel.add(createSaleSummaryPanel("Today's Income", "₱ ", (int) orderHistoryDBManager.getTodaysIncome()));
         upperPanel.add(createSaleSummaryPanel("Total Income", "₱ ", (int) orderHistoryDBManager.getTotalIncome()));
-        upperPanel.add(createSaleSummaryPanel("Number of Sold Products", "", orderHistoryDBManager.getTotalSoldProducts()));
+        upperPanel.add(createSaleSummaryPanel("<html><p>Number of Sold Products</p></html>", "", orderHistoryDBManager.getTotalSoldProducts()));
 
         // LOWER PART PANEL:
 
@@ -72,7 +72,7 @@ public class dashBoard extends JPanel {
         Font sz35 = registerUser.FontUtils.loadFont(35f);
 
         RoundedPanel saleSummaryPanel = new RoundedPanel(30);
-        saleSummaryPanel.setPreferredSize(new Dimension(250, 130));
+        saleSummaryPanel.setPreferredSize(new Dimension(200, 120));
         saleSummaryPanel.setBackground(Color.decode("#D9D9D9"));
         saleSummaryPanel.setLayout(new BorderLayout());
 

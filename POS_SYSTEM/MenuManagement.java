@@ -53,6 +53,7 @@ public class MenuManagement extends JPanel {
         // Search panel
         JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBackground(Color.decode("#898b8f"));
+        searchPanel.setPreferredSize(new Dimension(500, 40));
         searchPanel.setMaximumSize(new Dimension(500, 40));
 
         JTextField searchField = new JTextField();
@@ -66,6 +67,7 @@ public class MenuManagement extends JPanel {
         JButton searchBtn = new JButton("Search");
         searchBtn.setFont(sz16);
         searchBtn.setPreferredSize(new Dimension(100, 40));
+        searchBtn.setMaximumSize(new Dimension(100, 40));
         searchBtn.addActionListener(e -> {
             String searchText = searchField.getText().trim();
             if (!searchText.isEmpty()) {
@@ -93,6 +95,8 @@ public class MenuManagement extends JPanel {
         topBar.setOpaque(false);
         topBar.add(searchPanel, BorderLayout.WEST);
         topBar.add(dateLabel, BorderLayout.EAST);
+        topBar.setPreferredSize(new Dimension(1200,50));
+        topBar.setMaximumSize(new Dimension(1200,50));
         contentPanel.add(topBar);
         contentPanel.add(Box.createVerticalStrut(20));
 

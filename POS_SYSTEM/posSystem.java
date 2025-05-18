@@ -2,6 +2,7 @@ package POS_SYSTEM;
 
 import javax.swing.*;
 import javax.swing.Timer;
+import javax.swing.plaf.metal.MetalScrollBarUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -106,11 +107,11 @@ class navigationPanel extends JPanel {
         Font navFont = FontUtils.loadFont(18f);
         setPreferredSize(new Dimension(250, getHeight()));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(Color.decode("#03346E"));
+        setBackground(Color.decode("#00193b"));
 
         JPanel navHeader = new JPanel();
         navHeader.setLayout(new BoxLayout(navHeader, BoxLayout.X_AXIS));
-        navHeader.setBackground(Color.decode("#03346E"));
+        navHeader.setBackground(Color.decode("#00193b"));
         navHeader.setBorder(BorderFactory.createEmptyBorder(15, 15, 20, 15)); // Reduced padding
         navHeader.setMaximumSize(new Dimension(Integer.MAX_VALUE, 70)); // Reduced height
 
@@ -131,7 +132,7 @@ class navigationPanel extends JPanel {
         JLabel navTitle = new JLabel();
         navTitle.setForeground(Color.WHITE);
         navTitle.setFont(navFont);
-        navTitle.setText(" PCU CANTEEN POS");
+        navTitle.setText("<html><p>  DolphiMeals</p></html>");
         navTitle.setAlignmentY(Component.CENTER_ALIGNMENT);
         navHeader.add(navTitle);
 
@@ -139,14 +140,14 @@ class navigationPanel extends JPanel {
 
         JPanel navOptionsPanel = new JPanel();
         navOptionsPanel.setLayout(new BoxLayout(navOptionsPanel, BoxLayout.Y_AXIS));
-        navOptionsPanel.setBackground(Color.decode("#03346E"));
+        navOptionsPanel.setBackground(Color.decode("#00193b"));
         navOptionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         navOptionsPanel.add(createNavButton("Order Item", navFont));
         navOptionsPanel.add(createNavButton("Order History", navFont));
         navOptionsPanel.add(createNavButton("Dashboard", navFont));
         navOptionsPanel.add(createNavButton("Menu Management", navFont));
-        navOptionsPanel.add(createNavButton("Inventory", navFont));
+
 
         navOptionsPanel.add(Box.createVerticalGlue());
         navOptionsPanel.add(createNavButton("Logout", navFont));
@@ -172,8 +173,10 @@ class navigationPanel extends JPanel {
     private JButton createNavButton(String text, Font font) {
         JButton navButton = new JButton(text);
         navButton.setFont(font);
+
         navButton.setForeground(Color.WHITE);
-        navButton.setBackground(Color.decode("#03346E"));
+        navButton.setBackground(Color.decode("#00193b"));
+        navButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         navButton.setBorderPainted(false);
         navButton.setFocusPainted(false);
         navButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -183,7 +186,7 @@ class navigationPanel extends JPanel {
 
         navButton.addMouseListener(new MouseAdapter() {
             private final Color originalColor = navButton.getBackground();
-            private final Color hoverColor = Color.decode("#035096");
+            private final Color hoverColor = Color.darkGray;
 
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -270,6 +273,7 @@ class orderItemPanel extends JPanel {
     Font sz11 = FontUtils.loadFont(11f);
     Font sz12 = FontUtils.loadFont(12f);
     Font sz13 = FontUtils.loadFont(13f);
+    Font sz14 = FontUtils.loadFont(14f);
     Font sz15 = FontUtils.loadFont(15f);
     Font sz16 = FontUtils.loadFont(16f);
     Font sz17 = FontUtils.loadFont(17f);
@@ -279,17 +283,18 @@ class orderItemPanel extends JPanel {
     orderItemPanel(User currentUser) {
         this.currentUser = currentUser;
         Font oiFont = FontUtils.loadFont(15f);
-        setBackground(Color.decode("#021526"));
+        setBackground(Color.decode("#00132d"));
         setLayout(new BorderLayout());
 
         // Main container panel
         JPanel mainConts = new JPanel();
         mainConts.setLayout(new BoxLayout(mainConts, BoxLayout.Y_AXIS));
-        mainConts.setBackground(Color.decode("#021526"));
-        mainConts.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 0));
+        mainConts.setBackground(Color.decode("#00132d"));
+        mainConts.setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 0));
 
         // SEARCH BAR
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        RoundedPanel searchPanel = new RoundedPanel(20);
+        searchPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
         searchPanel.setBackground(Color.decode("#898b8f"));
         searchPanel.setPreferredSize(new Dimension(450, 40));
         searchPanel.setMaximumSize(new Dimension(450, 40));
@@ -297,39 +302,76 @@ class orderItemPanel extends JPanel {
         searchPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         searchBar = new JTextField();
-        searchBar.setBackground(Color.decode("#898b8f"));
+        searchBar.setOpaque(false);
         searchBar.setFont(oiFont);
         searchBar.setPreferredSize(new Dimension(350, 40));
         searchBar.setMaximumSize(new Dimension(350, 40));
+        searchBar.setBorder(BorderFactory.createEmptyBorder());
+        searchBar.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (searchBar.getText().equals("Search menu...")) {
+                    searchBar.setText("");
+                    searchBar.setForeground(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (searchBar.getText().isEmpty()) {
+                    searchBar.setText("Search menu...");
+                    searchBar.setForeground(Color.WHITE);
+                }
+            }
+        });
+
         searchPanel.add(searchBar, BorderLayout.CENTER);
 
-        JButton searchButton = new JButton();
-        searchButton.setText("Search");
+        RoundedButton searchButton = new RoundedButton("Search",20);
         searchButton.setFont(oiFont);
+        searchButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        searchButton.setForeground(Color.white);
+        searchButton.setBackground(Color.darkGray);
         searchButton.setPreferredSize(new Dimension(100, 40));
         searchButton.setMaximumSize(new Dimension(100, 40));
         searchPanel.add(searchButton, BorderLayout.EAST);
+        searchButton.addMouseListener(new MouseAdapter() {
+            private final Color originalColor = searchButton.getBackground();
+            private final Color hoverColor = Color.GRAY;
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                searchButton.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                searchButton.setBackground(originalColor);
+            }
+        });
+
         searchButton.addActionListener(evt -> searchButton());
 
         mainConts.add(searchPanel);
 
         // CATEGORY PANEL
-        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        categoryPanel.setBackground(Color.decode("#021526"));
+        JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
+        categoryPanel.setBackground(Color.decode("#00132d"));
         categoryPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        categoryPanel.setBorder(BorderFactory.createEmptyBorder(5,0,0,0));
         categoryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        categoryPanel.add(createCategoryButton("All", sz13, Color.gray));
-        categoryPanel.add(createCategoryButton("Meals", sz13, Color.gray));
-        categoryPanel.add(createCategoryButton("Snacks", sz13, Color.gray));
-        categoryPanel.add(createCategoryButton("Drinks", sz13, Color.gray));
+        categoryPanel.add(createCategoryButton("All", sz15, Color.gray));
+        categoryPanel.add(createCategoryButton("Meals", sz14, Color.gray));
+        categoryPanel.add(createCategoryButton("Snacks", sz14, Color.gray));
+        categoryPanel.add(createCategoryButton("Drinks", sz14, Color.gray));
 
         mainConts.add(categoryPanel);
 
         // PRODUCT ITEMS PANEL
-        productItemPanel = new JPanel(new GridLayout(0, 4, 2, 2));
-        productItemPanel.setBackground(Color.decode("#021526"));
-        productItemPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        productItemPanel = new JPanel(new GridLayout(0, 4, 8, 8));
+        productItemPanel.setBackground(Color.decode("#00132d"));
+        productItemPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         productItemPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         refreshProducts();
@@ -337,7 +379,7 @@ class orderItemPanel extends JPanel {
         // Order summary panel
         orderSummary = new JPanel();
         orderSummary.setPreferredSize(new Dimension(350, 720));
-        orderSummary.setBackground(Color.decode("#021526"));
+        orderSummary.setBackground(Color.decode("#00132d"));
         orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
 
         // Date panel
@@ -358,7 +400,7 @@ class orderItemPanel extends JPanel {
         orderSummary.add(datePanel);
 
         // Order list panel
-        orderList = new JPanel();
+        orderList = new RoundedPanel(20);
         orderList.setLayout(new BoxLayout(orderList, BoxLayout.Y_AXIS));
         orderList.setBackground(Color.decode("#424040"));
         orderList.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
@@ -368,7 +410,8 @@ class orderItemPanel extends JPanel {
         orderListScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderListScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         orderListScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        orderListScroll.setBorder(BorderFactory.createEmptyBorder(0, 10, 20, 10));
+        orderListScroll.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        orderListScroll.getViewport().setOpaque(false);
         orderListScroll.setOpaque(false);
         orderSummary.add(orderListScroll);
 
@@ -377,27 +420,60 @@ class orderItemPanel extends JPanel {
         JPanel orderButton = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         orderButton.setOpaque(false);
         orderButton.setPreferredSize(new Dimension(280, getHeight()));
-        orderButton.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
+        orderButton.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 0));
 
-        JButton cancelBtn = new JButton("Cancel Order");
+        RoundedButton cancelBtn = new RoundedButton("Cancel Order", 20);
         cancelBtn.setForeground(Color.WHITE);
         cancelBtn.setBackground(Color.decode("#BD1212"));
         cancelBtn.setPreferredSize(new Dimension(130, 45));
+        cancelBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         cancelBtn.setBorderPainted(false);
         cancelBtn.setFocusPainted(false);
         cancelBtn.setFont(sz15);
 
+        cancelBtn.addMouseListener(new MouseAdapter() {
+            private final Color originalColor = cancelBtn.getBackground();
+            private final Color hoverColor = Color.decode("#971A1A");
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cancelBtn.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cancelBtn.setBackground(originalColor);
+            }
+        });
+
         cancelBtn.addActionListener(evt -> cancelButton());
         orderButton.add(cancelBtn);
 
-        JButton processBtn = new JButton("Process Order");
+        RoundedButton processBtn = new RoundedButton("Process Order",20);
         processBtn.setForeground(Color.WHITE);
         processBtn.setBackground(Color.decode("#F9A61A"));
         processBtn.setPreferredSize(new Dimension(130, 45));
+        processBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         processBtn.setBorderPainted(false);
         processBtn.setFocusPainted(false);
         processBtn.setFont(sz15);
         orderButton.add(processBtn);
+
+        processBtn.addMouseListener(new MouseAdapter() {
+            private final Color originalColor = processBtn.getBackground();
+            private final Color hoverColor = Color.decode("#A9741A");
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                processBtn.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                processBtn.setBackground(originalColor);
+            }
+        });
+
         processBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -428,12 +504,145 @@ class orderItemPanel extends JPanel {
 
         JScrollPane productScrollPane = new JScrollPane(productItemPanel);
         productScrollPane.setBorder(null);
+        productScrollPane.getVerticalScrollBar().setUI(new ModernScrollBarUI());
         productScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         productScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        JScrollBar verticalScrollBar1 = productScrollPane.getVerticalScrollBar();
+        verticalScrollBar1.setUnitIncrement(20);
+        verticalScrollBar1.setBlockIncrement(80);
 
         mainConts.add(productScrollPane);
         add(mainConts, BorderLayout.CENTER);
         add(orderSummary, BorderLayout.EAST);
+    }
+
+    public void clearFields() {
+        searchBar.setText("Enter Product Name");
+        searchBar.setForeground(Color.WHITE);
+
+    }
+
+
+        class RoundedPanel extends JPanel {
+        private int radius;
+
+        public RoundedPanel(int radius) {
+            this.radius = radius;
+            setOpaque(false); // Make the panel transparent
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Dimension arcs = new Dimension(radius, radius);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle with the specified background color
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcs.width, arcs.height);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcs.width, arcs.height);
+            g2d.dispose();
+        }
+    }
+
+    class RoundedButton extends JButton {
+        private int radius;
+
+        public RoundedButton(String text, int radius) {
+            super(text);
+            this.radius = radius;
+            setOpaque(false); // Make the button transparent
+            setContentAreaFilled(false); // Don't fill the content area
+            setBorderPainted(false);    // Don't paint the border
+            setForeground(Color.WHITE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle for the button's background
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+
+            // Draw the button's text
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = (getWidth() - fm.stringWidth(getText())) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.setColor(getForeground());
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            g2d.dispose();
+        }
+    }
+
+
+    class ModernScrollBarUI extends MetalScrollBarUI {
+
+        private final Dimension THUMB_SIZE = new Dimension(8, 50); //make it thinner
+
+        @Override
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+            //super.paintTrack(g, g2d, trackBounds);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(240, 240, 240)); // Light gray track
+            g2.fillRoundRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height, 10, 10);
+        }
+
+        @Override
+        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !c.isEnabled()) {
+                return;
+            }
+
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Define colors
+            Color color = new Color(150, 150, 150); // Medium gray
+            Color hoverColor = new Color(130, 130, 130); // Darker gray on hover
+            Color dragColor = new Color(110, 110, 110); // Even darker when dragging
+
+            // State-based color selection
+            Color drawColor = color;
+            if (isDragging) {
+                drawColor = dragColor;
+            } else if (isThumbRollover()) {
+                drawColor = hoverColor;
+            }
+
+            // Draw rounded thumb
+            g2.setColor(drawColor);
+            g2.fillRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
+
+            // Optional: Subtle shadow for depth
+            g2.setColor(new Color(0, 0, 0, 50)); // Semi-transparent black
+            g2.drawRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
+        }
+
+        @Override
+        protected Dimension getMinimumThumbSize() {
+            return THUMB_SIZE;
+        }
+
+        @Override
+        public Dimension getPreferredSize(JComponent c) {
+            return new Dimension(12, super.getPreferredSize(c).height); //make it thinner
+        }
     }
 
     private void updateDateLabel(JLabel dateLabel, SimpleDateFormat dateFormat) {
@@ -575,11 +784,14 @@ class orderItemPanel extends JPanel {
     }
 
     private JButton createCategoryButton(String text, Font font, Color bgColor) {
-        JButton categoryButton = new JButton(text);
+        RoundedButton categoryButton = new RoundedButton(text,30);
         categoryButton.setFont(font);
         categoryButton.setBackground(bgColor);
         categoryButton.setBorderPainted(false);
         categoryButton.setFocusPainted(false);
+        categoryButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        categoryButton.setPreferredSize(new Dimension(80,30));
+        categoryButton.setMaximumSize(new Dimension(80,30));
         categoryButton.setForeground(Color.WHITE);
 
         categoryButton.addMouseListener(new MouseAdapter() {
@@ -703,12 +915,12 @@ class orderItemPanel extends JPanel {
         productItemCont.setOpaque(false);
         productItemCont.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        JPanel productItem = new JPanel();
-        productItem.setBackground(Color.decode("#111010"));
+        RoundedPanel productItem = new RoundedPanel(20);
+        productItem.setBackground(Color.darkGray);
         productItem.setPreferredSize(new Dimension(140, 190));
         productItem.setMaximumSize(new Dimension(140, 190));
         productItem.setLayout(new BorderLayout(0, 0));
-        productItem.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
+
 
         ImageIcon originalIcon = new ImageIcon(productImg);
         Image scaledImage = originalIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
@@ -716,13 +928,13 @@ class orderItemPanel extends JPanel {
 
         JLabel imgFrame = new JLabel(productPic, SwingConstants.CENTER);
         imgFrame.setAlignmentX(Component.CENTER_ALIGNMENT);
-        imgFrame.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        imgFrame.setBorder(BorderFactory.createEmptyBorder(10, 0, 5, 0));
         productItem.add(imgFrame, BorderLayout.NORTH);
 
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-        textPanel.setBackground(Color.decode("#111010"));
-        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        textPanel.setOpaque(false);
+        textPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 0, 5));
 
         JLabel productName = new JLabel(text);
         productName.setFont(sz15);
@@ -740,24 +952,40 @@ class orderItemPanel extends JPanel {
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
-        bottomPanel.setBackground(Color.decode("#111010"));
+        bottomPanel.setOpaque(false);
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         JLabel productPrice = new JLabel();
         productPrice.setText("₱" + String.format("%.2f", price));
         productPrice.setFont(sz15);
-        productPrice.setForeground(Color.decode("#686AF5"));
+        productPrice.setForeground(Color.WHITE);
         bottomPanel.add(productPrice, BorderLayout.WEST);
 
-        JButton addProduct = new JButton("+");
+        RoundedButton addProduct = new RoundedButton("+",20);
         addProduct.setForeground(Color.BLACK);
         addProduct.setBackground(Color.decode("#686AF5"));
+        addProduct.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addProduct.setBorderPainted(false);
         addProduct.setFocusPainted(false);
         addProduct.setPreferredSize(new Dimension(40, 40));
         addProduct.setFont(sz11);
         addProduct.setHorizontalAlignment(SwingConstants.CENTER);
         addProduct.setVerticalAlignment(SwingConstants.CENTER);
+
+        addProduct.addMouseListener(new MouseAdapter() {
+            private final Color originalColor = addProduct.getBackground();
+            private final Color hoverColor = Color.decode("#5456AC");
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                addProduct.setBackground(hoverColor);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                addProduct.setBackground(originalColor);
+            }
+        });
 
         addProduct.addActionListener(e -> {
             String productKey = text + productSize;
@@ -997,36 +1225,41 @@ class orderItemPanel extends JPanel {
         private final JLabel totalLabel;
 
         subTotalPanel() {
-            JPanel subTotal = new JPanel();
+            RoundedPanel subTotal = new RoundedPanel(20);
             subTotal.setBackground(Color.decode("#424040"));
             subTotal.setPreferredSize(new Dimension(330, 180)); // Increased from 280
             subTotal.setMaximumSize(new Dimension(330, 180));
             subTotal.setAlignmentX(Component.CENTER_ALIGNMENT);
             subTotal.setLayout(new BoxLayout(subTotal, BoxLayout.Y_AXIS));
-            subTotal.setBorder(BorderFactory.createEmptyBorder(15, 10, 0, 10)); // Reduced padding
+            subTotal.setBorder(BorderFactory.createEmptyBorder(5, 10, 0, 10)); // Reduced padding
 
             JLabel stText = new JLabel("Sub Total: ");
             stText.setFont(sz15);
+            stText.setBorder(BorderFactory.createEmptyBorder(15,0,5,0));
             stText.setForeground(Color.WHITE);
             subTotal.add(stText);
 
             subtotalLabel = new JLabel("₱" + String.format("%.2f", subtotal));
             subtotalLabel.setFont(sz15);
             subtotalLabel.setForeground(Color.WHITE);
+            subtotalLabel.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
             subTotal.add(subtotalLabel);
 
             taxLabel = new JLabel("Total Tax: ₱" + String.format("%.2f", tax));
             taxLabel.setFont(sz15);
+            taxLabel.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
             taxLabel.setForeground(Color.WHITE);
             subTotal.add(taxLabel);
 
             JLabel stLine = new JLabel("___________________________");
             stLine.setFont(sz15);
             stLine.setForeground(Color.WHITE);
+            stLine.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
             subTotal.add(stLine);
 
             JLabel stTotalText = new JLabel("Total: ");
             stTotalText.setFont(sz15);
+            stTotalText.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
             stTotalText.setForeground(Color.WHITE);
             subTotal.add(stTotalText);
 

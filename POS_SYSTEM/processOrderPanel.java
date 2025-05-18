@@ -42,8 +42,9 @@ public class processOrderPanel extends JPanel {
         Font sz18 = FontUtils.loadFont(18f);
         setLayout(new BorderLayout());
 
+
         JPanel processOrder = new JPanel();
-        processOrder.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        processOrder.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 5));
         processOrder.setPreferredSize(new Dimension(1280, 720));
         processOrder.setMaximumSize(new Dimension(1280, 720));
         processOrder.setBackground(Color.DARK_GRAY);
@@ -62,8 +63,9 @@ public class processOrderPanel extends JPanel {
     private JPanel createOrderSummarySide(List<Product> orderedProducts, Font sz15, Font sz18) {
         JPanel orderSummarySide = new JPanel();
         orderSummarySide.setLayout(new BoxLayout(orderSummarySide, BoxLayout.Y_AXIS));
-        orderSummarySide.setPreferredSize(new Dimension(400, 650));
-        orderSummarySide.setAlignmentX(Component.LEFT_ALIGNMENT);
+        orderSummarySide.setPreferredSize(new Dimension(350, 600));
+        orderSummarySide.setMaximumSize(new Dimension(350, 600));
+        orderSummarySide.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderSummarySide.setOpaque(false);
 
         // Order Summary Header
@@ -80,7 +82,7 @@ public class processOrderPanel extends JPanel {
         orderSummarySide.add(osPanel);
 
         // Order Items
-        JPanel orderProcessSummary = new JPanel();
+        RoundedPanel orderProcessSummary = new RoundedPanel(20);
         orderProcessSummary.setLayout(new BoxLayout(orderProcessSummary, BoxLayout.Y_AXIS));
         orderProcessSummary.setBackground(Color.decode("#2A273A"));
 
@@ -90,6 +92,7 @@ public class processOrderPanel extends JPanel {
         orderSummaryScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderSummaryScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         orderSummaryScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        orderSummaryScroll.getViewport().setOpaque(false);
         orderSummaryScroll.setOpaque(false);
 
         // Add order items
@@ -220,14 +223,81 @@ public class processOrderPanel extends JPanel {
         return subTotalPanel;
     }
 
+    class RoundedButton extends JButton {
+        private int radius;
+
+        public RoundedButton(String text, int radius) {
+            super(text);
+            this.radius = radius;
+            setOpaque(false); // Make the button transparent
+            setContentAreaFilled(false); // Don't fill the content area
+            setBorderPainted(false);    // Don't paint the border
+            setForeground(Color.WHITE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle for the button's background
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+
+            // Draw the button's text
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = (getWidth() - fm.stringWidth(getText())) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.setColor(getForeground());
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            g2d.dispose();
+        }
+    }
+
+
+    class RoundedPanel extends JPanel {
+        private int radius;
+
+        public RoundedPanel(int radius) {
+            this.radius = radius;
+            setOpaque(false); // Make the panel transparent
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Dimension arcs = new Dimension(radius, radius);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle with the specified background color
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcs.width, arcs.height);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcs.width, arcs.height);
+            g2d.dispose();
+        }
+    }
+
     private JPanel createProcessButtons(Font sz15) {
         JPanel processButtonPanel = new JPanel();
         processButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
         processButtonPanel.setPreferredSize(new Dimension(400, getHeight()));
         processButtonPanel.setOpaque(false);
+        processButtonPanel.setBorder(BorderFactory.createEmptyBorder(0,0,20,0));
 
         // Cancel Button
-        JButton cancelBtn = new JButton("Cancel");
+        RoundedButton cancelBtn = new RoundedButton("Cancel",20);
         cancelBtn.setForeground(Color.WHITE);
         cancelBtn.setBackground(Color.decode("#BD1212"));
         cancelBtn.setPreferredSize(new Dimension(120, 40));
@@ -242,9 +312,9 @@ public class processOrderPanel extends JPanel {
         });
 
         // Process Button
-        JButton processBtn = new JButton("Confirm Payment");
+        RoundedButton processBtn = new RoundedButton("Confirm Payment",20);
         processBtn.setForeground(Color.WHITE);
-        processBtn.setPreferredSize(new Dimension(150, 40));
+        processBtn.setPreferredSize(new Dimension(160, 40));
         processBtn.setBackground(Color.decode("#F9A61A"));
         processBtn.setBorderPainted(false);
         processBtn.setFocusPainted(false);
