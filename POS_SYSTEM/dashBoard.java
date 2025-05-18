@@ -1,4 +1,4 @@
-package POS_SYSTEM;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,10 +25,11 @@ public class dashBoard extends JPanel {
         upperPanel.setBorder(BorderFactory.createEmptyBorder(30, 10, 40, 10));
 
 
-        upperPanel.add(createSaleSummaryPanel("Number of Customer", "", 20));
-        upperPanel.add(createSaleSummaryPanel("Today's Income", "₱ ", 15000));
-        upperPanel.add(createSaleSummaryPanel("Total Income", "₱ ", 150200));
-        upperPanel.add(createSaleSummaryPanel("Number of Sold Products", "", 1002));
+        upperPanel.add(createSaleSummaryPanel("Number of Customer", "", 0)); // Placeholder (you can calculate customers later)
+        upperPanel.add(createSaleSummaryPanel("Today's Income", "₱ ", (int) DatabaseManager.getTodaysIncome()));
+        upperPanel.add(createSaleSummaryPanel("Total Income", "₱ ", (int) DatabaseManager.getTotalIncome()));
+        upperPanel.add(createSaleSummaryPanel("Number of Sold Products", "", DatabaseManager.getTotalSoldProducts()));
+
 
 
 
@@ -75,8 +76,8 @@ public class dashBoard extends JPanel {
 
     // METHOD TO CREATE THE 4 SALES DETAIL PANEL:
     public JPanel createSaleSummaryPanel(String text, String sign, int Data) {
-        Font sz16 = FontUtils.loadFont(16f);
-        Font sz35 = FontUtils.loadFont(35f);
+        Font sz16 = posSystem.FontUtils.loadFont(16f);
+        Font sz35 = registerUser.FontUtils.loadFont(35f);
 
         RoundedPanel saleSummaryPanel = new RoundedPanel(30);
         saleSummaryPanel.setPreferredSize(new Dimension(250, 130));
@@ -136,6 +137,6 @@ class RoundedPanel extends JPanel {
     @Override
     public void setForeground(Color fg) {
         super.setForeground(fg);
-        repaint(); 
+        repaint();
     }
 }
