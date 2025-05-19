@@ -1,18 +1,12 @@
 package POS_SYSTEM;
 
-
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalScrollBarUI;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 class orderHistory extends JPanel {
     JTextField searchField;
@@ -20,11 +14,10 @@ class orderHistory extends JPanel {
     JPanel orderListHistory;
     private List<OrderData> allOrders = new ArrayList<>();
 
-
     orderHistory() {
         Map<Integer, OrderData> orderMap = orderHistoryDBManager.getOrderHistory();
         allOrders.addAll(orderMap.values());
-
+        Collections.sort(allOrders); // sort by date (newest first)
 
         Font sz11 = FontUtils.loadFont(11f);
         Font sz12 = FontUtils.loadFont(12f);
@@ -103,31 +96,8 @@ class orderHistory extends JPanel {
 
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim().toLowerCase();
-
-
-            String numericQuery = query.replaceAll("[^0-9]", ""); // keeps only digits
-
-            orderListHistory.removeAll();
-
-            for (OrderData order : allOrders) {
-                boolean matchesOrderId = String.valueOf(order.getOrderId()).contains(numericQuery);
-                boolean matchesProduct = order.getProductNames().stream()
-                        .anyMatch(name -> name.toLowerCase().contains(query));
-
-                if (matchesOrderId || matchesProduct || query.isEmpty()) {
-                    orderListHistory.add(createOHItem(
-                            order.getOrderId(),
-                            order.getTotal(),
-                            order.getProductNames(),
-                            order.getDate() // Use getter method
-                    ));
-                }
-            }
-
-            orderListHistory.revalidate();
-            orderListHistory.repaint();
-
-
+            String numericQuery = query.replaceAll("[^0-9]", "");
+            refreshOrderList(query, numericQuery);
         });
 
         // Date label
@@ -145,7 +115,7 @@ class orderHistory extends JPanel {
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(topBar);
 
-
+        // Title panel
         JPanel oHTitleContainer = new JPanel(new BorderLayout());
         oHTitleContainer.setPreferredSize(new Dimension(1080, 50));
         oHTitleContainer.setMaximumSize(new Dimension(1080, 50));
@@ -157,17 +127,17 @@ class orderHistory extends JPanel {
         oHTitle.setForeground(Color.white);
         oHTitle.setAlignmentX(LEFT_ALIGNMENT);
         oHTitleContainer.add(oHTitle, BorderLayout.WEST);
-
         add(oHTitleContainer);
 
+        // Order list panel
         orderListHistory = new JPanel();
         orderListHistory.setLayout(new BoxLayout(orderListHistory, BoxLayout.Y_AXIS));
         orderListHistory.setBackground(Color.decode("#021526"));
 
-
+        // Scroll pane for order list
         JScrollPane orderListScrollPane = new JScrollPane(orderListHistory);
         orderListScrollPane.setBorder(null);
-        orderListScrollPane.setPreferredSize(new Dimension(1000, 400)); // Adjusted dimensions
+        orderListScrollPane.setPreferredSize(new Dimension(1000, 400));
         orderListScrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderListScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         orderListScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -175,14 +145,36 @@ class orderHistory extends JPanel {
         orderListScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         orderListScrollPane.setOpaque(false);
 
-
-        for (OrderData order : orderMap.values()) {
-            JPanel ohItem = createOHItem(order.getOrderId(), order.getTotal(), order.getProductNames(), order.getDate());
-            orderListHistory.add(ohItem);
-        }
-
+        // Initial population of order list
+        refreshOrderList();
 
         add(orderListScrollPane);
+    }
+
+    private void refreshOrderList() {
+        refreshOrderList("", "");
+    }
+
+    private void refreshOrderList(String query, String numericQuery) {
+        orderListHistory.removeAll();
+
+        for (OrderData order : allOrders) {
+            boolean matchesOrderId = String.valueOf(order.getOrderId()).contains(numericQuery);
+            boolean matchesProduct = order.getProductNames().stream()
+                    .anyMatch(name -> name.toLowerCase().contains(query));
+
+            if (matchesOrderId || matchesProduct || query.isEmpty()) {
+                orderListHistory.add(createOHItem(
+                        order.getOrderId(),
+                        order.getTotal(),
+                        order.getProductNames(),
+                        order.getDate()
+                ));
+            }
+        }
+
+        orderListHistory.revalidate();
+        orderListHistory.repaint();
     }
 
     public JPanel createOHItem(int orderId, double totalAmount, List<String> productList, String date) {
@@ -232,7 +224,7 @@ class orderHistory extends JPanel {
         total.setFont(sz25);
         createOHItemPanel.add(total);
 
-        // Dynamically adjust panel height based on number of products
+        // Dynamic height adjustment
         int baseHeight = 100;
         int productHeight = productList.size() * 20;
         createOHItemPanel.setPreferredSize(new Dimension(1000, Math.max(baseHeight, productHeight + 60)));
@@ -244,49 +236,33 @@ class orderHistory extends JPanel {
         searchField.setText("Search product item...");
         searchField.setForeground(Color.WHITE);
         searchField.transferFocus();
+        refreshOrderList();
     }
 
     class ModernScrollBarUI extends MetalScrollBarUI {
-
-        private final Dimension THUMB_SIZE = new Dimension(8, 50); //make it thinner
+        private final Dimension THUMB_SIZE = new Dimension(8, 50);
 
         @Override
         protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
-            //super.paintTrack(g, g2d, trackBounds);
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(new Color(240, 240, 240)); // Light gray track
+            g2.setColor(new Color(240, 240, 240));
             g2.fillRoundRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height, 10, 10);
         }
 
         @Override
         protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
-            if (thumbBounds.isEmpty() || !c.isEnabled()) {
-                return;
-            }
+            if (thumbBounds.isEmpty() || !c.isEnabled()) return;
 
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Define colors
-            Color color = new Color(150, 150, 150); // Medium gray
-            Color hoverColor = new Color(130, 130, 130); // Darker gray on hover
-            Color dragColor = new Color(110, 110, 110); // Even darker when dragging
+            Color color = isThumbRollover() ? new Color(130, 130, 130) :
+                    isDragging ? new Color(110, 110, 110) : new Color(150, 150, 150);
 
-            // State-based color selection
-            Color drawColor = color;
-            if (isDragging) {
-                drawColor = dragColor;
-            } else if (isThumbRollover()) {
-                drawColor = hoverColor;
-            }
-
-            // Draw rounded thumb
-            g2.setColor(drawColor);
+            g2.setColor(color);
             g2.fillRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
-
-            // Optional: Subtle shadow for depth
-            g2.setColor(new Color(0, 0, 0, 50)); // Semi-transparent black
+            g2.setColor(new Color(0, 0, 0, 50));
             g2.drawRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
         }
 
@@ -297,7 +273,7 @@ class orderHistory extends JPanel {
 
         @Override
         public Dimension getPreferredSize(JComponent c) {
-            return new Dimension(12, super.getPreferredSize(c).height); //make it thinner
+            return new Dimension(12, super.getPreferredSize(c).height);
         }
     }
 
@@ -307,9 +283,9 @@ class orderHistory extends JPanel {
         public RoundedButton(String text, int radius) {
             super(text);
             this.radius = radius;
-            setOpaque(false); // Make the button transparent
-            setContentAreaFilled(false); // Don't fill the content area
-            setBorderPainted(false);    // Don't paint the border
+            setOpaque(false);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
             setForeground(Color.WHITE);
         }
 
@@ -317,12 +293,9 @@ class orderHistory extends JPanel {
         protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Draw a rounded rectangle for the button's background
             g2d.setColor(getBackground());
             g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
 
-            // Draw the button's text
             FontMetrics fm = g2d.getFontMetrics();
             int x = (getWidth() - fm.stringWidth(getText())) / 2;
             int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
@@ -341,5 +314,4 @@ class orderHistory extends JPanel {
             g2d.dispose();
         }
     }
-
 }

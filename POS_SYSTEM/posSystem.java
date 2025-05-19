@@ -22,7 +22,7 @@ public class posSystem extends javax.swing.JFrame {
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        setResizable(false);
+//        setResizable(false);
         this.setLocationRelativeTo(null);
 
         ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
@@ -67,8 +67,7 @@ public class posSystem extends javax.swing.JFrame {
     }
 
     public static void main(String[] args) {
-        User user = new User("admin", "admin");
-        new posSystem(user);
+        new logInSection();
     }
 
     public orderItemPanel getOrderItemPanel() {

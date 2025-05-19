@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class orderHistoryDBManager {
     private static final String EXCEL_FILE_PATH = "db/orderHistory.xlsx";
@@ -49,6 +50,8 @@ public class orderHistoryDBManager {
             e.printStackTrace();
         }
     }
+
+
 
     public static Map<Integer, OrderData> getOrderHistory() {
         Map<Integer, OrderData> orderMap = new HashMap<>();
@@ -208,15 +211,17 @@ public class orderHistoryDBManager {
         return null;
     }
 
-    public static Map<String, Double> getWeeklyIncome() {
-        Map<String, Double> weeklyIncome = new LinkedHashMap<>();
-        SimpleDateFormat weekFormat = new SimpleDateFormat("w, yyyy"); // Week number and year
+
+
+    public static Map<String, Double> getMonthlyIncome() {
+        Map<String, Double> monthlyIncome = new LinkedHashMap<>();
+        SimpleDateFormat monthFormat = new SimpleDateFormat("M"); // Month number (1-12)
 
         try (FileInputStream fis = new FileInputStream(EXCEL_FILE_PATH);
              Workbook workbook = new XSSFWorkbook(fis)) {
 
             Sheet sheet = workbook.getSheetAt(0);
-            if (sheet == null) return weeklyIncome;
+            if (sheet == null) return monthlyIncome;
 
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
@@ -238,12 +243,12 @@ public class orderHistoryDBManager {
                         continue;
                     }
 
-                    String weekKey = weekFormat.format(date);
+                    String monthKey = monthFormat.format(date);
                     double price = priceCell.getNumericCellValue();
                     int quantity = (int) quantityCell.getNumericCellValue();
                     double amount = price * quantity;
 
-                    weeklyIncome.merge(weekKey, amount, Double::sum);
+                    monthlyIncome.merge(monthKey, amount, Double::sum);
                 } catch (Exception e) {
                     continue;
                 }
@@ -252,6 +257,15 @@ public class orderHistoryDBManager {
             e.printStackTrace();
         }
 
-        return weeklyIncome;
+        // Sort the months in numerical order (1-12)
+        return monthlyIncome.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByKey(Comparator.comparingInt(Integer::parseInt)))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 }
