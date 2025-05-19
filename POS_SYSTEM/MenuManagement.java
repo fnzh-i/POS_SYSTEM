@@ -2,14 +2,13 @@ package POS_SYSTEM;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -25,6 +24,8 @@ public class MenuManagement extends JPanel {
     Font sz16 = FontUtils.loadFont(16f);
     Font sz18 = FontUtils.loadFont(18f);
 
+
+
     public MenuManagement(User currentUser) {
         this(currentUser, null);
     }
@@ -33,14 +34,14 @@ public class MenuManagement extends JPanel {
         this.currentUser = currentUser;
         this.posFrame = posFrame;
         setLayout(new BorderLayout());
-        setBackground(Color.decode("#021526"));
+        setBackground(new Color(2, 21, 38));
         setPreferredSize(new Dimension(1280, 720));
         initializeUI();
     }
 
     private void initializeUI() {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.decode("#021526"));
+        mainPanel.setBackground(new Color(2, 21, 38));
 
         JPanel contentPanel = createContentPanel();
         mainPanel.add(contentPanel, BorderLayout.CENTER);
@@ -51,13 +52,13 @@ public class MenuManagement extends JPanel {
     private JPanel createContentPanel() {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.setBackground(Color.decode("#021526"));
+        contentPanel.setBackground(new Color(2,21,38));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         // Search panel
         RoundedPanel searchPanel = new RoundedPanel(20);
         searchPanel.setLayout(new BorderLayout(0,0));
-        searchPanel.setBackground(Color.decode("#898b8f"));
+        searchPanel.setBackground(new Color(137,139,143));
         searchPanel.setPreferredSize(new Dimension(450, 40));
         searchPanel.setMaximumSize(new Dimension(450, 40));
 
@@ -68,7 +69,7 @@ public class MenuManagement extends JPanel {
         searchField.setCaretColor(Color.WHITE);
         searchField.setOpaque(false);
 
-        searchField.setBackground(Color.decode("#898b8f"));
+        searchField.setBackground(new Color(137, 139, 143));
         searchField.setFont(sz16);
         searchField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
         searchField.setPreferredSize(new Dimension(350, 40));
@@ -87,7 +88,7 @@ public class MenuManagement extends JPanel {
             public void focusLost(FocusEvent e) {
                 if (searchField.getText().isEmpty()) {
                     searchField.setText("Search product item...");
-                    searchField.setForeground(Color.WHITE);
+                    searchField.setForeground(Color.DARK_GRAY);
                     clearFields();
                 }
             }
@@ -95,7 +96,7 @@ public class MenuManagement extends JPanel {
 
         searchPanel.add(searchField, BorderLayout.CENTER);
 
-        orderItemPanel.RoundedButton searchBtn = new orderItemPanel.RoundedButton("Search", 20);
+        RoundedButton searchBtn = new RoundedButton("Search", 20);
         searchBtn.setFont(sz16);
         searchBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         searchBtn.setForeground(Color.WHITE);
@@ -137,7 +138,7 @@ public class MenuManagement extends JPanel {
 
         // Categories
         JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        categoryPanel.setBackground(new Color(20, 28, 38));
+        categoryPanel.setBackground(new Color(2, 21, 38));
         categoryPanel.setPreferredSize(new Dimension(1200,150));
         categoryPanel.setMaximumSize(new Dimension(1200,150 ));
 
@@ -175,7 +176,7 @@ public class MenuManagement extends JPanel {
         }
 
         // Add Item button
-        orderItemPanel.RoundedButton addItemBtn = new orderItemPanel.RoundedButton("+ Add Item", 20);
+        RoundedButton addItemBtn = new RoundedButton("+ Add Item", 20);
         addItemBtn.setBackground(new Color(255, 193, 7));
         addItemBtn.setForeground(Color.black);
         addItemBtn.setFont(new Font("Roboto", Font.BOLD, 14));
@@ -190,10 +191,11 @@ public class MenuManagement extends JPanel {
         contentPanel.add(Box.createVerticalStrut(20));
 
         // Menu items grid - using the stored reference
-
         gridPanel = new RoundedPanel(20); // Rounded corners
         gridPanel.setLayout(new GridLayout(0, 3, 15, 15));
-        gridPanel.setBackground(new Color(20, 28, 38));
+        gridPanel.setBackground(new Color(2,21,38));
+        gridPanel.setOpaque(false);
+        gridPanel.setBorder(null);
 
         for (Product product : allProducts) {
             JPanel card = createItemCard(product);
@@ -203,6 +205,8 @@ public class MenuManagement extends JPanel {
         JScrollPane gridScroll = new JScrollPane(gridPanel);
         gridScroll.setBorder(null);
         gridScroll.getVerticalScrollBar().setUnitIncrement(16);
+        gridScroll.setOpaque(false);
+        gridScroll.getViewport().setOpaque(false);
         contentPanel.add(gridScroll);
 
         return contentPanel;
@@ -216,7 +220,7 @@ public class MenuManagement extends JPanel {
     }
 
     private JPanel createItemCard(Product product) {
-        JPanel card = new JPanel();
+        RoundedPanel card = new RoundedPanel(20);
         card.setBackground(new Color(48, 41, 57));
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -289,7 +293,7 @@ public class MenuManagement extends JPanel {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnPanel.setOpaque(false);
 
-        orderItemPanel.RoundedButton editBtn = new orderItemPanel.RoundedButton("Edit", 10);
+        RoundedButton editBtn = new RoundedButton("Edit", 10);
 //        JButton editBtn = new JButton("Edit");
         editBtn.setBackground(new Color(255, 193, 7));
         editBtn.setForeground(Color.black);
@@ -297,7 +301,7 @@ public class MenuManagement extends JPanel {
         editBtn.setPreferredSize(new Dimension(70, 25));
         editBtn.addActionListener(e -> editProduct(product));
 
-        orderItemPanel.RoundedButton delBtn = new orderItemPanel.RoundedButton("Delete", 10);
+        RoundedButton delBtn = new RoundedButton("Delete", 10);
         delBtn.setBackground(new Color(220, 53, 69));
         delBtn.setForeground(Color.white);
         delBtn.setFont(sz14);
@@ -409,6 +413,70 @@ public class MenuManagement extends JPanel {
         add(addItemPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
+    }
+    class RoundedPanel extends JPanel {
+        private int radius;
+
+        public RoundedPanel(int radius) {
+            this.radius = radius;
+            setOpaque(false); // Make the panel transparent
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Dimension arcs = new Dimension(radius, radius);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle with the specified background color
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth(), getHeight(), arcs.width, arcs.height);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth(), getHeight(), arcs.width, arcs.height);
+            g2d.dispose();
+        }
+    }
+
+    static class RoundedButton extends JButton {
+        private int radius;
+
+        public RoundedButton(String text, int radius) {
+            super(text);
+            this.radius = radius;
+            setOpaque(false); // Make the button transparent
+            setContentAreaFilled(false); // Don't fill the content area
+            setBorderPainted(false);    // Don't paint the border
+            setForeground(new Color(2, 21, 38));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle for the button's background
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth(), getHeight(), radius, radius);
+
+            // Draw the button's text
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = (getWidth() - fm.stringWidth(getText())) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.setColor(getForeground());
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(getBackground());
+            g2d.drawRoundRect(0, 0, getWidth(),getHeight(), radius, radius);
+            g2d.dispose();
+        }
     }
 
 }
