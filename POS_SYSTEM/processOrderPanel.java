@@ -44,13 +44,16 @@ public class processOrderPanel extends JPanel {
 
 
         JPanel processOrder = new JPanel();
-        processOrder.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        processOrder.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
         processOrder.setPreferredSize(new Dimension(1280, 720));
         processOrder.setMaximumSize(new Dimension(1280, 720));
         processOrder.setBackground(Color.DARK_GRAY);
 
+
         // Order Summary Side
         JPanel orderSummarySide = createOrderSummarySide(orderedProducts, sz15, sz18);
+        orderSummarySide.setPreferredSize(new Dimension(400, 750));
+        orderSummarySide.setMaximumSize(new Dimension(400, 750));
         processOrder.add(orderSummarySide);
 
         // Receipt Side
@@ -88,7 +91,8 @@ public class processOrderPanel extends JPanel {
 
         JScrollPane orderSummaryScroll = new JScrollPane(orderProcessSummary);
         orderSummaryScroll.setBorder(null);
-        orderSummaryScroll.setPreferredSize(new Dimension(380, 300));
+        orderSummaryScroll.setPreferredSize(new Dimension(450, 400));
+        orderSummaryScroll.setMaximumSize(new Dimension(450, 400));
         orderSummaryScroll.setAlignmentX(Component.CENTER_ALIGNMENT);
         orderSummaryScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         orderSummaryScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -300,7 +304,7 @@ public class processOrderPanel extends JPanel {
         RoundedButton cancelBtn = new RoundedButton("Cancel",20);
         cancelBtn.setForeground(Color.WHITE);
         cancelBtn.setBackground(Color.decode("#BD1212"));
-        cancelBtn.setPreferredSize(new Dimension(120, 40));
+        cancelBtn.setPreferredSize(new Dimension(123, 48));
         cancelBtn.setBorderPainted(false);
         cancelBtn.setFocusPainted(false);
         cancelBtn.setFont(sz15);
@@ -314,7 +318,7 @@ public class processOrderPanel extends JPanel {
         // Process Button
         RoundedButton processBtn = new RoundedButton("Confirm Payment",20);
         processBtn.setForeground(Color.WHITE);
-        processBtn.setPreferredSize(new Dimension(160, 40));
+        processBtn.setPreferredSize(new Dimension(163, 48));
         processBtn.setBackground(Color.decode("#F9A61A"));
         processBtn.setBorderPainted(false);
         processBtn.setFocusPainted(false);
@@ -429,8 +433,8 @@ public class processOrderPanel extends JPanel {
         JPanel receiptSide = new JPanel();
         receiptSide.setLayout(new BorderLayout());
         receiptSide.setBackground(Color.WHITE);
-        receiptSide.setPreferredSize(new Dimension(500, 800));
-        receiptSide.setMaximumSize(new Dimension(500, 800));
+        receiptSide.setPreferredSize(new Dimension(500, 720));
+        receiptSide.setMaximumSize(new Dimension(500, 720));
 
         // RECEIPT HEADER:
         JPanel receiptHeader = new JPanel();
