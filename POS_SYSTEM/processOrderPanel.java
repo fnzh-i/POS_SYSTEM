@@ -540,7 +540,7 @@ public class processOrderPanel extends JPanel {
             totalQuantity += itemQuantity;
             totalCost += itemPrice * itemQuantity;
             tax = totalCost * vatRate;
-            finalAmount = totalCost + tax;
+            finalAmount = totalCost - tax;
         }
 
         receiptDetailContainer.add(receiptItemSummary);
