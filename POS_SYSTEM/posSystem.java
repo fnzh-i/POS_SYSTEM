@@ -14,7 +14,7 @@ public class posSystem extends javax.swing.JFrame {
 
     private orderItemPanel orderItemSection;
     private final User currentUser;
-    private JPanel currentCenterPanel; // Track the current center panel
+    private JPanel currentCenterPanel; // tracks' the current center panel
 
     public posSystem(User user) {
         this.currentUser = user;
@@ -22,7 +22,7 @@ public class posSystem extends javax.swing.JFrame {
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-//        setResizable(false);
+        setResizable(false);
         this.setLocationRelativeTo(null);
 
         ImageIcon systemIcon = new ImageIcon("Images/Logo/Philippine_Christian_University_logo.png");
