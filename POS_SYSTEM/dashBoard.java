@@ -55,12 +55,7 @@ public class dashBoard extends JPanel {
         lowerPanel.add(monthlyGraphPanel);
 
 
-        // PANEL FOR MONTHLY
-        JPanel sidePanel = new RoundedPanel(10);
-        sidePanel.setPreferredSize(new Dimension(450, 400));
-        sidePanel.setMaximumSize(new Dimension(450, 400));
-        sidePanel.setBackground(Color.white);
-        lowerPanel.add(sidePanel);
+
 
         add(upperPanel, BorderLayout.NORTH);
         add(lowerPanel, BorderLayout.CENTER);
