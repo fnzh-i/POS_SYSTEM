@@ -184,7 +184,7 @@ public class AddItem extends JPanel {
         mainPanel.add(descArea);
 
         // Add Image button - NEW BUTTON ADDED HERE
-        addImageButton = new orderItemPanel.RoundedButton("Add Image", 20);
+        addImageButton = new RoundedButton("Add Image", 20);
         addImageButton.setFont(new Font("Roboto", Font.BOLD, 18));
         addImageButton.setBackground(new Color(108, 117, 125)); // Gray color
         addImageButton.setForeground(Color.WHITE);
@@ -194,7 +194,7 @@ public class AddItem extends JPanel {
         mainPanel.add(addImageButton);
 
         // Action button (Add/Update) - MOVED DOWN
-        actionButton = new orderItemPanel.RoundedButton(productToEdit == null ? "+ Add Item" : "Update Item", 20);
+        actionButton = new RoundedButton(productToEdit == null ? "+ Add Item" : "Update Item", 20);
         actionButton.setFont(new Font("Roboto", Font.BOLD, 18));
         actionButton.setBackground(new Color(255, 193, 7));
         actionButton.setForeground(Color.BLACK);
@@ -204,7 +204,7 @@ public class AddItem extends JPanel {
         mainPanel.add(actionButton);
 
         // Cancel button - MOVED DOWN
-        orderItemPanel.RoundedButton cancelButton = new orderItemPanel.RoundedButton("Cancel",20);
+        RoundedButton cancelButton = new RoundedButton("Cancel",20);
         cancelButton.setFont(new Font("Roboto", Font.BOLD, 18));
         cancelButton.setBackground(new Color(220, 53, 69));
         cancelButton.setForeground(Color.WHITE);
@@ -361,5 +361,46 @@ public class AddItem extends JPanel {
         descArea.setForeground(Color.WHITE);
         priceField.setText("Enter price");
         priceField.setForeground(Color.WHITE);
+    }
+
+    class RoundedButton extends JButton {
+        private int radius;
+
+        public RoundedButton(String text, int radius) {
+            super(text);
+            this.radius = radius;
+            setOpaque(false); // Make the button transparent
+            setContentAreaFilled(false); // Don't fill the content area
+            setBorderPainted(false);    // Don't paint the border
+            setForeground(Color.WHITE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle for the button's background
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+
+            // Draw the button's text
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = (getWidth() - fm.stringWidth(getText())) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.setColor(getForeground());
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            g2d.dispose();
+        }
     }
 }

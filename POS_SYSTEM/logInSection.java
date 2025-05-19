@@ -84,7 +84,7 @@ public class logInSection extends JFrame {
         logInCont.add(passTextField );
 
         //LOGIN BUTTON
-        orderItemPanel.RoundedButton logInBtn = new orderItemPanel.RoundedButton("LOG IN", 20);
+        RoundedButton logInBtn = new RoundedButton("LOG IN", 20);
 //        logInBtn.setText("LOG IN");
         logInBtn.setForeground(Color.WHITE);
         logInBtn.setBackground(Color.decode("#F9A61A"));
@@ -133,6 +133,7 @@ public class logInSection extends JFrame {
             }
         });
 
+
         registerAcc.addMouseListener(new MouseListener() {
 
             public void mouseClicked(MouseEvent e){
@@ -156,6 +157,86 @@ public class logInSection extends JFrame {
         setVisible(true);
 
 
+    }
+
+    public static void main (String[] args){
+
+        JFrame frame = new JFrame();
+        frame.setSize(1280, 720);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+
+        new logInSection();
+
+    }
+
+
+
+    class RoundedPanel extends JPanel {
+        private int radius;
+
+        public RoundedPanel(int radius) {
+            this.radius = radius;
+            setOpaque(false); // Make the panel transparent
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Dimension arcs = new Dimension(radius, radius);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle with the specified background color
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcs.width, arcs.height);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcs.width, arcs.height);
+            g2d.dispose();
+        }
+    }
+
+    class RoundedButton extends JButton {
+        private int radius;
+
+        public RoundedButton(String text, int radius) {
+            super(text);
+            this.radius = radius;
+            setOpaque(false); // Make the button transparent
+            setContentAreaFilled(false); // Don't fill the content area
+            setBorderPainted(false);    // Don't paint the border
+            setForeground(Color.WHITE);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Draw a rounded rectangle for the button's background
+            g2d.setColor(getBackground());
+            g2d.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+
+            // Draw the button's text
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = (getWidth() - fm.stringWidth(getText())) / 2;
+            int y = (getHeight() - fm.getHeight()) / 2 + fm.getAscent();
+            g2d.setColor(getForeground());
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setColor(getForeground());
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, radius, radius);
+            g2d.dispose();
+        }
     }
 
 }

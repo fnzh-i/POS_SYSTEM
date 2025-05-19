@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.imageio.ImageIO;
+import javax.swing.plaf.metal.MetalScrollBarUI;
 
 public class MenuManagement extends JPanel {
     private final User currentUser;
@@ -65,7 +66,7 @@ public class MenuManagement extends JPanel {
         // Placeholder for search bar
         searchField = new JTextField("Search product item...");
         searchField.setBounds(60,120,600,35);
-        searchField.setForeground(Color.WHITE); // Set placeholder color
+        searchField.setForeground(Color.darkGray); // Set placeholder color
         searchField.setCaretColor(Color.WHITE);
         searchField.setOpaque(false);
 
@@ -207,10 +208,67 @@ public class MenuManagement extends JPanel {
         gridScroll.getVerticalScrollBar().setUnitIncrement(16);
         gridScroll.setOpaque(false);
         gridScroll.getViewport().setOpaque(false);
+        gridScroll.getVerticalScrollBar().setUI(new ModernScrollBarUI());
         contentPanel.add(gridScroll);
 
         return contentPanel;
+
     }
+    class ModernScrollBarUI extends MetalScrollBarUI {
+
+        private final Dimension THUMB_SIZE = new Dimension(8, 50); //make it thinner
+
+        @Override
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+            //super.paintTrack(g, g2d, trackBounds);
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.setColor(new Color(240, 240, 240)); // Light gray track
+            g2.fillRoundRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height, 10, 10);
+        }
+
+        @Override
+        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !c.isEnabled()) {
+                return;
+            }
+
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Define colors
+            Color color = new Color(150, 150, 150); // Medium gray
+            Color hoverColor = new Color(130, 130, 130); // Darker gray on hover
+            Color dragColor = new Color(110, 110, 110); // Even darker when dragging
+
+            // State-based color selection
+            Color drawColor = color;
+            if (isDragging) {
+                drawColor = dragColor;
+            } else if (isThumbRollover()) {
+                drawColor = hoverColor;
+            }
+
+            // Draw rounded thumb
+            g2.setColor(drawColor);
+            g2.fillRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
+
+            // Optional: Subtle shadow for depth
+            g2.setColor(new Color(0, 0, 0, 50)); // Semi-transparent black
+            g2.drawRoundRect(thumbBounds.x, thumbBounds.y, thumbBounds.width, thumbBounds.height, 10, 10);
+        }
+
+        @Override
+        protected Dimension getMinimumThumbSize() {
+            return THUMB_SIZE;
+        }
+
+        @Override
+        public Dimension getPreferredSize(JComponent c) {
+            return new Dimension(12, super.getPreferredSize(c).height); //make it thinner
+        }
+    }
+
 
 
     private void updateDateLabel(JLabel dateLabel, SimpleDateFormat dateFormat) {
@@ -239,7 +297,7 @@ public class MenuManagement extends JPanel {
                     BufferedImage originalImage = ImageIO.read(imageFile);
 
                     // Scale image to fit
-                    Image scaledImage = originalImage.getScaledInstance(170, 120, Image.SCALE_SMOOTH);
+                    Image scaledImage = originalImage.getScaledInstance(80, 80, Image.SCALE_SMOOTH);
                     ImageIcon imageIcon = new ImageIcon(scaledImage);
                     JLabel imageLabel = new JLabel(imageIcon);
                     imagePanel.add(imageLabel, BorderLayout.CENTER);
@@ -478,5 +536,7 @@ public class MenuManagement extends JPanel {
             g2d.dispose();
         }
     }
+
+
 
 }

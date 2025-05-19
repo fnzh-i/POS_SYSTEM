@@ -303,20 +303,20 @@ class orderItemPanel extends JPanel {
 
         JTextField searchBarNameField = new JTextField("Search menu...");
         searchBarNameField.setBounds(60, 120, 600, 35);
-        searchBarNameField.setForeground(Color.WHITE);  // Placeholder color
+        searchBarNameField.setForeground(Color.darkGray);  // Placeholder color
         searchBarNameField.setCaretColor(Color.WHITE);
         searchBarNameField.setOpaque(false);
         searchBarNameField.setFont(oiFont);
         searchBarNameField.setPreferredSize(new Dimension(350, 40));
         searchBarNameField.setMaximumSize(new Dimension(350, 40));
-        searchBarNameField.setBorder(BorderFactory.createEmptyBorder());
+        searchBarNameField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
 
         searchBarNameField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (searchBarNameField.getText().equals("Search menu...")) {
                     searchBarNameField.setText("");
-                    searchBarNameField.setForeground(Color.WHITE);
+                    searchBarNameField.setForeground(Color.darkGray);
                 }
             }
 
@@ -324,7 +324,7 @@ class orderItemPanel extends JPanel {
             public void focusLost(FocusEvent e) {
                 if (searchBarNameField.getText().isEmpty()) {
                     searchBarNameField.setText("Search menu...");
-                    searchBarNameField.setForeground(Color.WHITE);
+                    searchBarNameField.setForeground(Color.darkGray);
                 }
             }
         });
@@ -361,7 +361,8 @@ class orderItemPanel extends JPanel {
         // CATEGORY PANEL
         JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         categoryPanel.setBackground(Color.decode("#00132d"));
-        categoryPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        categoryPanel.setPreferredSize(new Dimension(500, 60));
+        categoryPanel.setMaximumSize(new Dimension(500, 60));
         categoryPanel.setBorder(BorderFactory.createEmptyBorder(5,0,0,0));
         categoryPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -387,7 +388,7 @@ class orderItemPanel extends JPanel {
         orderSummary.setLayout(new BoxLayout(orderSummary, BoxLayout.Y_AXIS));
 
         // Date panel
-        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        JPanel datePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         datePanel.setOpaque(false);
         JLabel dateLabel = new JLabel();
         dateLabel.setForeground(Color.WHITE);
@@ -399,7 +400,7 @@ class orderItemPanel extends JPanel {
         Timer timer = new Timer(1000, e -> updateDateLabel(dateLabel, dateFormat));
         timer.start();
 
-        datePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        datePanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 10));
         datePanel.add(dateLabel);
         orderSummary.add(datePanel);
 
@@ -553,7 +554,7 @@ class orderItemPanel extends JPanel {
         }
     }
 
-    static class RoundedButton extends JButton {
+    class RoundedButton extends JButton {
         private int radius;
 
         public RoundedButton(String text, int radius) {
@@ -972,7 +973,7 @@ class orderItemPanel extends JPanel {
         addProduct.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         addProduct.setBorderPainted(false);
         addProduct.setFocusPainted(false);
-        addProduct.setPreferredSize(new Dimension(40, 40));
+        addProduct.setPreferredSize(new Dimension(42, 40));
         addProduct.setFont(sz11);
         addProduct.setHorizontalAlignment(SwingConstants.CENTER);
         addProduct.setVerticalAlignment(SwingConstants.CENTER);
