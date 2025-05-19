@@ -182,7 +182,7 @@ class navigationPanel extends JPanel {
         navButton.setHorizontalAlignment(SwingConstants.LEFT);
         navButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         navButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
-        navButton.setBorder(BorderFactory.createEmptyBorder(15, 30, 15, 0));
+        navButton.setBorder(BorderFactory.createEmptyBorder(25, 30, 25, 0));
 
         navButton.addMouseListener(new MouseAdapter() {
             private final Color originalColor = navButton.getBackground();
@@ -267,7 +267,7 @@ class orderItemPanel extends JPanel {
     final subTotalPanel subtotalPanel;
     final JPanel orderList;
     private final JPanel productItemPanel;
-    private final JTextField searchBar;
+    private final JTextField searchBar = new JTextField();
     private final User currentUser;
 
     Font sz11 = FontUtils.loadFont(11f);
@@ -301,31 +301,35 @@ class orderItemPanel extends JPanel {
         searchPanel.setLayout(new BorderLayout());
         searchPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        searchBar = new JTextField();
-        searchBar.setOpaque(false);
-        searchBar.setFont(oiFont);
-        searchBar.setPreferredSize(new Dimension(350, 40));
-        searchBar.setMaximumSize(new Dimension(350, 40));
-        searchBar.setBorder(BorderFactory.createEmptyBorder());
-        searchBar.addFocusListener(new FocusAdapter() {
+        JTextField searchBarNameField = new JTextField("Search menu...");
+        searchBarNameField.setBounds(60, 120, 600, 35);
+        searchBarNameField.setForeground(Color.WHITE);  // Placeholder color
+        searchBarNameField.setCaretColor(Color.WHITE);
+        searchBarNameField.setOpaque(false);
+        searchBarNameField.setFont(oiFont);
+        searchBarNameField.setPreferredSize(new Dimension(350, 40));
+        searchBarNameField.setMaximumSize(new Dimension(350, 40));
+        searchBarNameField.setBorder(BorderFactory.createEmptyBorder());
+
+        searchBarNameField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (searchBar.getText().equals("Search menu...")) {
-                    searchBar.setText("");
-                    searchBar.setForeground(Color.WHITE);
+                if (searchBarNameField.getText().equals("Search menu...")) {
+                    searchBarNameField.setText("");
+                    searchBarNameField.setForeground(Color.WHITE);
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (searchBar.getText().isEmpty()) {
-                    searchBar.setText("Search menu...");
-                    searchBar.setForeground(Color.WHITE);
+                if (searchBarNameField.getText().isEmpty()) {
+                    searchBarNameField.setText("Search menu...");
+                    searchBarNameField.setForeground(Color.WHITE);
                 }
             }
         });
 
-        searchPanel.add(searchBar, BorderLayout.CENTER);
+        searchPanel.add(searchBarNameField, BorderLayout.CENTER);
 
         RoundedButton searchButton = new RoundedButton("Search",20);
         searchButton.setFont(oiFont);
@@ -517,11 +521,12 @@ class orderItemPanel extends JPanel {
         add(orderSummary, BorderLayout.EAST);
     }
 
-    public void clearFields() {
-        searchBar.setText("Enter Product Name");
-        searchBar.setForeground(Color.WHITE);
-
-    }
+//    public void clearFields() {
+//        searchBar.setText("Enter Product Name");
+//        searchBar.setForeground(Color.WHITE);
+//        searchBar.transferFocus();
+//
+//    }
 
 
         class RoundedPanel extends JPanel {
@@ -548,7 +553,7 @@ class orderItemPanel extends JPanel {
         }
     }
 
-    class RoundedButton extends JButton {
+    static class RoundedButton extends JButton {
         private int radius;
 
         public RoundedButton(String text, int radius) {

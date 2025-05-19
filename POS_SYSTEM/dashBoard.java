@@ -19,10 +19,10 @@ public class dashBoard extends JPanel {
         setBackground(Color.decode("#00132d"));
 
         // UPPER PART PANEL FOR THE SALES DETAILS:
-        JPanel upperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 40, 0));
+        JPanel upperPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0)); //adjust hgap from 40 to 10
         upperPanel.setBackground(Color.decode("#00132d"));
-        upperPanel.setPreferredSize(new Dimension(1200, 200));
-        upperPanel.setMaximumSize(new Dimension(1200, 200));
+        upperPanel.setPreferredSize(new Dimension(1200, 200)); //gap nila
+        upperPanel.setMaximumSize(new Dimension(1200, 200)); //gap nila between upper and weekly n monthly
         upperPanel.setBorder(BorderFactory.createEmptyBorder(30, 10, 40, 10));
 
         upperPanel.add(createSaleSummaryPanel("Number of Customer", "", 0)); // Placeholder (you can calculate customers later)
@@ -37,10 +37,10 @@ public class dashBoard extends JPanel {
         lowerPanel.setBackground(Color.decode("#00132d"));
         lowerPanel.setOpaque(false);
 
-        // PANEL FOR MONTHLY GRAPH:
-        JPanel monthlyGraphPanel = new RoundedPanel(80);
-        monthlyGraphPanel.setPreferredSize(new Dimension(800, 500));
-        monthlyGraphPanel.setMaximumSize(new Dimension(800, 500));
+        // PANEL FOR WEEKLY GRAPH
+        JPanel monthlyGraphPanel = new RoundedPanel(10); // di ko maiba yung radius ng weekly graph
+        monthlyGraphPanel.setPreferredSize(new Dimension(450, 400));
+        monthlyGraphPanel.setMaximumSize(new Dimension(450, 400));
         monthlyGraphPanel.setBackground(Color.white);
         monthlyGraphPanel.setLayout(new BorderLayout());
 
@@ -55,10 +55,10 @@ public class dashBoard extends JPanel {
         lowerPanel.add(monthlyGraphPanel);
 
 
-        // PANEL FOR OTHER DETAILS FOR DASHBOARD
-        JPanel sidePanel = new RoundedPanel(80);
-        sidePanel.setPreferredSize(new Dimension(380, 500));
-        sidePanel.setMaximumSize(new Dimension(380, 500));
+        // PANEL FOR MONTHLY
+        JPanel sidePanel = new RoundedPanel(10);
+        sidePanel.setPreferredSize(new Dimension(450, 400));
+        sidePanel.setMaximumSize(new Dimension(450, 400));
         sidePanel.setBackground(Color.white);
         lowerPanel.add(sidePanel);
 
@@ -138,7 +138,7 @@ class RoundedPanel extends JPanel {
         private Color lineColor = new Color(44, 102, 230);
         private Color pointColor = new Color(230, 60, 60);
         private Color gridColor = new Color(200, 200, 200);
-        private Font labelFont = new Font("Arial", Font.PLAIN, 12);
+        private Font labelFont = new Font("Roboto", Font.PLAIN, 12);
 
         public IncomeGraphPanel(Map<String, Double> weeklyData) {
             this.weeklyData = weeklyData;
@@ -164,7 +164,7 @@ class RoundedPanel extends JPanel {
 
         private void drawNoDataMessage(Graphics2D g2) {
             g2.setColor(Color.GRAY);
-            g2.setFont(new Font("Arial", Font.BOLD, 16));
+            g2.setFont(new Font("Roboto", Font.BOLD, 16));
             String message = "No sales data available";
             int messageWidth = g2.getFontMetrics().stringWidth(message);
             g2.drawString(message, getWidth()/2 - messageWidth/2, getHeight()/2);
@@ -172,7 +172,7 @@ class RoundedPanel extends JPanel {
 
         private void drawTitle(Graphics2D g2) {
             g2.setColor(Color.BLACK);
-            g2.setFont(new Font("Arial", Font.BOLD, 16));
+            g2.setFont(new Font("Roboto", Font.BOLD, 16));
             String title = "Weekly Income Report";
             int titleWidth = g2.getFontMetrics().stringWidth(title);
             g2.drawString(title, getWidth()/2 - titleWidth/2, 30);

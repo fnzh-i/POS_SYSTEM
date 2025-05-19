@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ public class AddItem extends JPanel {
     private JComboBox<String> categoryComboBox;
     private JTextField priceField;
     private JTextArea descArea;
+    private boolean placeholderSetByCode = false;
     private JButton actionButton;
     private JButton addImageButton; // New button for adding images
 
@@ -58,9 +61,27 @@ public class AddItem extends JPanel {
         nameField.setBounds(60, 120, 600, 35);
         nameField.setFont(new Font("Roboto", Font.PLAIN, 16));
         nameField.setBackground(new Color(8, 28, 48));
-        nameField.setForeground(Color.WHITE);
+        nameField.setForeground(Color.WHITE); // Placeholder style
         nameField.setCaretColor(Color.WHITE);
         nameField.setBorder(BorderFactory.createLineBorder(new Color(180, 200, 220)));
+        nameField.setText("Enter item name"); // Show placeholder immediately
+
+        nameField.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+                if (nameField.getText().equals("Enter item name")) {
+                    nameField.setText("");
+                    nameField.setForeground(Color.WHITE);
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                if (nameField.getText().isEmpty()) {
+                    nameField.setText("Enter item name");
+                    nameField.setForeground(Color.WHITE);
+                }
+            }
+        });
+
         mainPanel.add(nameField);
 
         // Item Category (now a dropdown)
@@ -99,9 +120,29 @@ public class AddItem extends JPanel {
         priceField.setBounds(60, 280, 600, 35);
         priceField.setFont(new Font("Roboto", Font.PLAIN, 16));
         priceField.setBackground(new Color(8, 28, 48));
-        priceField.setForeground(Color.WHITE);
+        priceField.setForeground(Color.WHITE); // Placeholder color
         priceField.setCaretColor(Color.WHITE);
         priceField.setBorder(BorderFactory.createLineBorder(new Color(180, 200, 220)));
+        priceField.setText("Enter price"); // Show placeholder initially
+
+        priceField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (priceField.getText().equals("Enter price")) {
+                    priceField.setText("");
+                    priceField.setForeground(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (priceField.getText().isEmpty()) {
+                    priceField.setText("Enter price");
+                    priceField.setForeground(Color.WHITE);
+                }
+            }
+        });
+
         mainPanel.add(priceField);
 
         // Product Description (used for size)
@@ -109,20 +150,41 @@ public class AddItem extends JPanel {
         descLabel.setForeground(Color.WHITE);
         descLabel.setFont(new Font("Roboto", Font.BOLD, 16));
         descLabel.setBounds(60, 330, 200, 25);
+
         mainPanel.add(descLabel);
+
         descArea = new JTextArea();
         descArea.setBounds(60, 360, 600, 60);
         descArea.setFont(new Font("Roboto", Font.PLAIN, 16));
         descArea.setBackground(new Color(8, 28, 48));
-        descArea.setForeground(Color.WHITE);
+        descArea.setForeground(Color.WHITE); // Placeholder color
         descArea.setCaretColor(Color.WHITE);
         descArea.setBorder(BorderFactory.createLineBorder(new Color(180, 200, 220)));
         descArea.setLineWrap(true);
         descArea.setWrapStyleWord(true);
+        descArea.setText("Enter size/description"); // Show placeholder initially
+
+        descArea.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (descArea.getText().equals("Enter size/description")) {
+                    descArea.setText("");
+                    descArea.setForeground(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (descArea.getText().isEmpty()) {
+                    descArea.setText("Enter size/description");
+                    descArea.setForeground(Color.WHITE);
+                }
+            }
+        });
         mainPanel.add(descArea);
 
         // Add Image button - NEW BUTTON ADDED HERE
-        addImageButton = new JButton("Add Image");
+        addImageButton = new orderItemPanel.RoundedButton("Add Image", 20);
         addImageButton.setFont(new Font("Roboto", Font.BOLD, 18));
         addImageButton.setBackground(new Color(108, 117, 125)); // Gray color
         addImageButton.setForeground(Color.WHITE);
@@ -132,22 +194,22 @@ public class AddItem extends JPanel {
         mainPanel.add(addImageButton);
 
         // Action button (Add/Update) - MOVED DOWN
-        actionButton = new JButton(productToEdit == null ? "+ Add Item" : "Update Item");
+        actionButton = new orderItemPanel.RoundedButton(productToEdit == null ? "+ Add Item" : "Update Item", 20);
         actionButton.setFont(new Font("Roboto", Font.BOLD, 18));
         actionButton.setBackground(new Color(255, 193, 7));
         actionButton.setForeground(Color.BLACK);
         actionButton.setFocusPainted(false);
-        actionButton.setBounds(60, 500, 180, 45); // Changed y-position from 440 to 500
+        actionButton.setBounds(600, 600, 180, 45); // Changed y-position from 440 to 500
         actionButton.addActionListener(this::saveProduct);
         mainPanel.add(actionButton);
 
         // Cancel button - MOVED DOWN
-        JButton cancelButton = new JButton("Cancel");
+        orderItemPanel.RoundedButton cancelButton = new orderItemPanel.RoundedButton("Cancel",20);
         cancelButton.setFont(new Font("Roboto", Font.BOLD, 18));
         cancelButton.setBackground(new Color(220, 53, 69));
         cancelButton.setForeground(Color.WHITE);
         cancelButton.setFocusPainted(false);
-        cancelButton.setBounds(260, 500, 180, 45); // Changed y-position from 440 to 500
+        cancelButton.setBounds(800, 600, 180, 45); // Changed y-position from 440 to 500
         cancelButton.addActionListener(e -> {
             JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
             if (topFrame instanceof posSystem) {
@@ -293,9 +355,11 @@ public class AddItem extends JPanel {
 
     // Method to clear all fields
     public void clearFields() {
-        nameField.setText("");
-        categoryComboBox.setSelectedIndex(0);
-        priceField.setText("");
-        descArea.setText("");
+        nameField.setText("Enter item name");
+        nameField.setForeground(Color.WHITE);
+        descArea.setText("Enter Size/Description");
+        descArea.setForeground(Color.WHITE);
+        priceField.setText("Enter price");
+        priceField.setForeground(Color.WHITE);
     }
 }

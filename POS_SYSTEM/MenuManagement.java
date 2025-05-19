@@ -3,6 +3,8 @@ package POS_SYSTEM;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,8 @@ public class MenuManagement extends JPanel {
     private final User currentUser;
     private JPanel gridPanel;
     private final posSystem posFrame;
+    private JTextField searchField;
+    private boolean placeholderSetByCode = false;
 
     Font sz14 = FontUtils.loadFont(14f);
     Font sz16 = FontUtils.loadFont(16f);
@@ -51,23 +55,54 @@ public class MenuManagement extends JPanel {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
         // Search panel
-        JPanel searchPanel = new JPanel(new BorderLayout());
+        RoundedPanel searchPanel = new RoundedPanel(20);
+        searchPanel.setLayout(new BorderLayout(0,0));
         searchPanel.setBackground(Color.decode("#898b8f"));
-        searchPanel.setPreferredSize(new Dimension(500, 40));
-        searchPanel.setMaximumSize(new Dimension(500, 40));
+        searchPanel.setPreferredSize(new Dimension(450, 40));
+        searchPanel.setMaximumSize(new Dimension(450, 40));
 
-        JTextField searchField = new JTextField();
+        // Placeholder for search bar
+        searchField = new JTextField("Search product item...");
+        searchField.setBounds(60,120,600,35);
+        searchField.setForeground(Color.WHITE); // Set placeholder color
+        searchField.setCaretColor(Color.WHITE);
+        searchField.setOpaque(false);
+
         searchField.setBackground(Color.decode("#898b8f"));
         searchField.setFont(sz16);
         searchField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));
-        searchField.setPreferredSize(new Dimension(400, 40));
-        searchField.setMaximumSize(new Dimension(400, 40));
+        searchField.setPreferredSize(new Dimension(350, 40));
+        searchField.setMaximumSize(new Dimension(350, 40));
+
+        searchField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (searchField.getText().equals("Search product item...")) {
+                    searchField.setText("");
+                    searchField.setForeground(new Color(255, 255, 255));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (searchField.getText().isEmpty()) {
+                    searchField.setText("Search product item...");
+                    searchField.setForeground(Color.WHITE);
+                    clearFields();
+                }
+            }
+        });
+
         searchPanel.add(searchField, BorderLayout.CENTER);
 
-        JButton searchBtn = new JButton("Search");
+        orderItemPanel.RoundedButton searchBtn = new orderItemPanel.RoundedButton("Search", 20);
         searchBtn.setFont(sz16);
+        searchBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        searchBtn.setForeground(Color.WHITE);
+        searchBtn.setBackground(Color.DARK_GRAY);
         searchBtn.setPreferredSize(new Dimension(100, 40));
         searchBtn.setMaximumSize(new Dimension(100, 40));
+
         searchBtn.addActionListener(e -> {
             String searchText = searchField.getText().trim();
             if (!searchText.isEmpty()) {
@@ -103,6 +138,8 @@ public class MenuManagement extends JPanel {
         // Categories
         JPanel categoryPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         categoryPanel.setBackground(new Color(20, 28, 38));
+        categoryPanel.setPreferredSize(new Dimension(1200,150));
+        categoryPanel.setMaximumSize(new Dimension(1200,150 ));
 
         List<Product> allProducts = ProductDBManager.getAllProducts();
         int allCount = allProducts.size();
@@ -118,8 +155,8 @@ public class MenuManagement extends JPanel {
         };
 
         for (String[] cat : categories) {
-            JPanel card = new JPanel();
-            card.setPreferredSize(new Dimension(140, 60));
+            RoundedPanel card = new RoundedPanel(10);
+            card.setPreferredSize(new Dimension(150, 90));
             card.setBackground(new Color(48, 41, 57));
             card.setLayout(new BorderLayout());
 
@@ -138,12 +175,12 @@ public class MenuManagement extends JPanel {
         }
 
         // Add Item button
-        JButton addItemBtn = new JButton("+ Add Item");
-        addItemBtn.setBackground(new Color(48, 41, 57));
-        addItemBtn.setForeground(Color.WHITE);
+        orderItemPanel.RoundedButton addItemBtn = new orderItemPanel.RoundedButton("+ Add Item", 20);
+        addItemBtn.setBackground(new Color(255, 193, 7));
+        addItemBtn.setForeground(Color.black);
         addItemBtn.setFont(new Font("Roboto", Font.BOLD, 14));
         addItemBtn.setFocusPainted(false);
-        addItemBtn.setPreferredSize(new Dimension(120, 40));
+        addItemBtn.setPreferredSize(new Dimension(130, 50));
         addItemBtn.addActionListener(e -> showAddItemPanel());
 
         categoryPanel.add(Box.createHorizontalStrut(10));
@@ -153,7 +190,9 @@ public class MenuManagement extends JPanel {
         contentPanel.add(Box.createVerticalStrut(20));
 
         // Menu items grid - using the stored reference
-        gridPanel = new JPanel(new GridLayout(0, 3, 15, 15));
+
+        gridPanel = new RoundedPanel(20); // Rounded corners
+        gridPanel.setLayout(new GridLayout(0, 3, 15, 15));
         gridPanel.setBackground(new Color(20, 28, 38));
 
         for (Product product : allProducts) {
@@ -168,6 +207,7 @@ public class MenuManagement extends JPanel {
 
         return contentPanel;
     }
+
 
     private void updateDateLabel(JLabel dateLabel, SimpleDateFormat dateFormat) {
         Date now = new Date();
@@ -249,16 +289,17 @@ public class MenuManagement extends JPanel {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         btnPanel.setOpaque(false);
 
-        JButton editBtn = new JButton("Edit");
+        orderItemPanel.RoundedButton editBtn = new orderItemPanel.RoundedButton("Edit", 10);
+//        JButton editBtn = new JButton("Edit");
         editBtn.setBackground(new Color(255, 193, 7));
-        editBtn.setForeground(Color.BLACK);
+        editBtn.setForeground(Color.black);
         editBtn.setFont(sz14);
         editBtn.setPreferredSize(new Dimension(70, 25));
         editBtn.addActionListener(e -> editProduct(product));
 
-        JButton delBtn = new JButton("Delete");
+        orderItemPanel.RoundedButton delBtn = new orderItemPanel.RoundedButton("Delete", 10);
         delBtn.setBackground(new Color(220, 53, 69));
-        delBtn.setForeground(Color.WHITE);
+        delBtn.setForeground(Color.white);
         delBtn.setFont(sz14);
         delBtn.setPreferredSize(new Dimension(70, 25));
         delBtn.addActionListener(e -> deleteProduct(product));
@@ -321,6 +362,12 @@ public class MenuManagement extends JPanel {
         repaint();
     }
 
+    private void clearFields() {
+        searchField.setText("Search product item...");
+        searchField.setForeground(Color.WHITE);
+        searchField.transferFocus();
+    }
+
     private int countProductsByCategory(List<Product> products, String category) {
         int count = 0;
         for (Product product : products) {
@@ -363,4 +410,5 @@ public class MenuManagement extends JPanel {
         revalidate();
         repaint();
     }
+
 }

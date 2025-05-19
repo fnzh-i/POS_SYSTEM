@@ -35,7 +35,7 @@ public class logInSection extends JFrame {
         add(loginTitle);
 
 
-        JPanel logInCont = new JPanel();
+        RoundedPanel logInCont = new RoundedPanel(20); //wow bago
         logInCont.setBackground(Color.decode("#03346E"));
         logInCont.setLayout(null);
         logInCont.setBounds(401,122,500,493);
@@ -84,8 +84,8 @@ public class logInSection extends JFrame {
         logInCont.add(passTextField );
 
         //LOGIN BUTTON
-        JButton logInBtn = new JButton();
-        logInBtn.setText("LOG IN");
+        orderItemPanel.RoundedButton logInBtn = new orderItemPanel.RoundedButton("LOG IN", 20);
+//        logInBtn.setText("LOG IN");
         logInBtn.setForeground(Color.WHITE);
         logInBtn.setBackground(Color.decode("#F9A61A"));
         logInBtn.setFont(loginBtnFont);
